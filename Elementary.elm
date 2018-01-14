@@ -32,10 +32,7 @@ initZoo =
 
 species : List String
 species =
-    [ "Elephant"
-    , "Sea Lion"
-    , "Parakeet"
-    ]
+    [ "Elephant", "Sea Lion", "Parakeet" ]
 
 
 speciesCount : Zoo -> String -> Int
@@ -43,26 +40,9 @@ speciesCount zoo name =
     Maybe.withDefault 0 (Dict.get name zoo.population)
 
 
-zip : List a -> List b -> List ( a, b )
-zip xs ys =
-    case xs of
-        [] ->
-            []
-
-        x :: xs ->
-            case ys of
-                [] ->
-                    []
-
-                y :: ys ->
-                    ( x, y ) :: zip xs ys
-
-
 emptyZoo : Zoo
 emptyZoo =
-    { population =
-        Dict.fromList (zip species (List.repeat (List.length species) 0))
-    }
+    { population = Dict.fromList (List.map (\b -> ( b, 0 )) species) }
 
 
 viewZoo : Zoo -> Html ZooMsg
