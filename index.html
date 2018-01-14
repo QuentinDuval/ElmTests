@@ -7882,29 +7882,73 @@ var _elm_lang$html$Html_Events$Options = F2(
 	function (a, b) {
 		return {stopPropagation: a, preventDefault: b};
 	});
-var _user$project$Elementary$onAddParakeet = function (zoo) {
-	return _elm_lang$core$Native_Utils.update(
-		zoo,
-		{parakeetCount: 1 + zoo.parakeetCount});
+var _user$project$Elementary$onAddBeast = F2(
+	function (zoo, name) {
+		var addOne = function (nb) {
+			return _elm_lang$core$Maybe$Just(
+				1 + A2(_elm_lang$core$Maybe$withDefault, 0, nb));
+		};
+		return _elm_lang$core$Native_Utils.update(
+			zoo,
+			{
+				population: A3(_elm_lang$core$Dict$update, name, addOne, zoo.population)
+			});
+	});
+var _user$project$Elementary$zip = F2(
+	function (xs, ys) {
+		var _p0 = xs;
+		if (_p0.ctor === '[]') {
+			return {ctor: '[]'};
+		} else {
+			var _p1 = ys;
+			if (_p1.ctor === '[]') {
+				return {ctor: '[]'};
+			} else {
+				return {
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: _p0._0, _1: _p1._0},
+					_1: A2(_user$project$Elementary$zip, _p0._1, _p1._1)
+				};
+			}
+		}
+	});
+var _user$project$Elementary$speciesCount = F2(
+	function (zoo, name) {
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			0,
+			A2(_elm_lang$core$Dict$get, name, zoo.population));
+	});
+var _user$project$Elementary$species = {
+	ctor: '::',
+	_0: 'Elephant',
+	_1: {
+		ctor: '::',
+		_0: 'Sea Lion',
+		_1: {
+			ctor: '::',
+			_0: 'Parakeet',
+			_1: {ctor: '[]'}
+		}
+	}
 };
-var _user$project$Elementary$onAddSeaLion = function (zoo) {
-	return _elm_lang$core$Native_Utils.update(
-		zoo,
-		{seaLionCount: 1 + zoo.seaLionCount});
+var _user$project$Elementary$emptyZoo = {
+	population: _elm_lang$core$Dict$fromList(
+		A2(
+			_user$project$Elementary$zip,
+			_user$project$Elementary$species,
+			A2(
+				_elm_lang$core$List$repeat,
+				_elm_lang$core$List$length(_user$project$Elementary$species),
+				0)))
 };
-var _user$project$Elementary$onAddElephant = function (zoo) {
-	return _elm_lang$core$Native_Utils.update(
-		zoo,
-		{elephantCount: 1 + zoo.elephantCount});
-};
-var _user$project$Elementary$emptyZoo = {elephantCount: 0, seaLionCount: 0, parakeetCount: 0};
 var _user$project$Elementary$updateZoo = F2(
 	function (msg, zoo) {
-		var _p0 = msg;
-		if (_p0.ctor === 'AddBeast') {
+		var _p2 = msg;
+		if (_p2.ctor === 'AddBeast') {
 			return {
 				ctor: '_Tuple2',
-				_0: _p0._0(zoo),
+				_0: A2(_user$project$Elementary$onAddBeast, zoo, _p2._0),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
@@ -7912,54 +7956,56 @@ var _user$project$Elementary$updateZoo = F2(
 		}
 	});
 var _user$project$Elementary$initZoo = {ctor: '_Tuple2', _0: _user$project$Elementary$emptyZoo, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Elementary$Zoo = F3(
-	function (a, b, c) {
-		return {elephantCount: a, seaLionCount: b, parakeetCount: c};
-	});
+var _user$project$Elementary$Zoo = function (a) {
+	return {population: a};
+};
 var _user$project$Elementary$ResetZoo = {ctor: 'ResetZoo'};
 var _user$project$Elementary$AddBeast = function (a) {
 	return {ctor: 'AddBeast', _0: a};
 };
-var _user$project$Elementary$viewPopulation = _elm_lang$core$List$map(
-	function (_p1) {
-		var _p2 = _p1;
-		var _p3 = _p2._0;
-		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_p3,
+var _user$project$Elementary$viewPopulation = function (zoo) {
+	return A2(
+		_elm_lang$core$List$map,
+		function (beast) {
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							': ',
+							beast,
 							A2(
 								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_p2._1),
-								' ')))),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$button,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(
-								_user$project$Elementary$AddBeast(_p2._2)),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								A2(_elm_lang$core$Basics_ops['++'], 'Add ', _p3)),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
+								': ',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(
+										A2(_user$project$Elementary$speciesCount, zoo, beast)),
+									' ')))),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$button,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(
+									_user$project$Elementary$AddBeast(beast)),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									A2(_elm_lang$core$Basics_ops['++'], 'Add ', beast)),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				});
+		},
+		_user$project$Elementary$species);
+};
 var _user$project$Elementary$viewZoo = function (zoo) {
 	var population = A2(
 		_elm_lang$core$List$intersperse,
@@ -7967,20 +8013,7 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 			_elm_lang$html$Html$br,
 			{ctor: '[]'},
 			{ctor: '[]'}),
-		_user$project$Elementary$viewPopulation(
-			{
-				ctor: '::',
-				_0: {ctor: '_Tuple3', _0: 'Elephant', _1: zoo.elephantCount, _2: _user$project$Elementary$onAddElephant},
-				_1: {
-					ctor: '::',
-					_0: {ctor: '_Tuple3', _0: 'Sea Lion', _1: zoo.seaLionCount, _2: _user$project$Elementary$onAddSeaLion},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple3', _0: 'Parakeet', _1: zoo.parakeetCount, _2: _user$project$Elementary$onAddParakeet},
-						_1: {ctor: '[]'}
-					}
-				}
-			}));
+		_user$project$Elementary$viewPopulation(zoo));
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -8027,7 +8060,7 @@ var _user$project$Elementary$main = _elm_lang$html$Html$program(
 		init: _user$project$Elementary$initZoo,
 		view: _user$project$Elementary$viewZoo,
 		update: _user$project$Elementary$updateZoo,
-		subscriptions: function (_p4) {
+		subscriptions: function (_p3) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();

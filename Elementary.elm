@@ -2,6 +2,7 @@ module Elementary exposing (..)
 
 import Html exposing (..)
 import Html.Events exposing (..)
+import Dict exposing (Dict)
 
 
 main : Program Never Zoo ZooMsg
@@ -15,14 +16,12 @@ main =
 
 
 type alias Zoo =
-    { elephantCount : Int
-    , seaLionCount : Int
-    , parakeetCount : Int
+    { population : Dict String Int
     }
 
 
 type ZooMsg
-    = AddBeast (Zoo -> Zoo)
+    = AddBeast String
     | ResetZoo
 
 
@@ -31,21 +30,46 @@ initZoo =
     ( emptyZoo, Cmd.none )
 
 
+species : List String
+species =
+    [ "Elephant"
+    , "Sea Lion"
+    , "Parakeet"
+    ]
+
+
+speciesCount : Zoo -> String -> Int
+speciesCount zoo name =
+    Maybe.withDefault 0 (Dict.get name zoo.population)
+
+
+zip : List a -> List b -> List ( a, b )
+zip xs ys =
+    case xs of
+        [] ->
+            []
+
+        x :: xs ->
+            case ys of
+                [] ->
+                    []
+
+                y :: ys ->
+                    ( x, y ) :: zip xs ys
+
+
 emptyZoo : Zoo
 emptyZoo =
-    { elephantCount = 0, seaLionCount = 0, parakeetCount = 0 }
+    { population =
+        Dict.fromList (zip species (List.repeat (List.length species) 0))
+    }
 
 
 viewZoo : Zoo -> Html ZooMsg
 viewZoo zoo =
     let
         population =
-            viewPopulation
-                [ ( "Elephant", zoo.elephantCount, onAddElephant )
-                , ( "Sea Lion", zoo.seaLionCount, onAddSeaLion )
-                , ( "Parakeet", zoo.parakeetCount, onAddParakeet )
-                ]
-                |> List.intersperse (br [] [])
+            List.intersperse (br [] []) (viewPopulation zoo)
     in
         div []
             (h4 [] [ text "Zoo population" ]
@@ -56,40 +80,35 @@ viewZoo zoo =
             )
 
 
-viewPopulation : List ( String, Int, Zoo -> Zoo ) -> List (Html ZooMsg)
-viewPopulation =
+viewPopulation : Zoo -> List (Html ZooMsg)
+viewPopulation zoo =
     List.map
-        (\( beast, nb, cb ) ->
+        (\beast ->
             div []
-                [ text (beast ++ ": " ++ toString nb ++ " ")
-                , button [ onClick (AddBeast cb) ] [ text ("Add " ++ beast) ]
+                [ text (beast ++ ": " ++ toString (speciesCount zoo beast) ++ " ")
+                , button [ onClick (AddBeast beast) ] [ text ("Add " ++ beast) ]
                 ]
         )
+        species
 
 
 updateZoo : ZooMsg -> Zoo -> ( Zoo, Cmd ZooMsg )
 updateZoo msg zoo =
     case msg of
-        AddBeast f ->
-            ( f zoo, Cmd.none )
+        AddBeast name ->
+            ( onAddBeast zoo name, Cmd.none )
 
         ResetZoo ->
             ( emptyZoo, Cmd.none )
 
 
-onAddElephant : Zoo -> Zoo
-onAddElephant zoo =
-    { zoo | elephantCount = 1 + zoo.elephantCount }
-
-
-onAddSeaLion : Zoo -> Zoo
-onAddSeaLion zoo =
-    { zoo | seaLionCount = 1 + zoo.seaLionCount }
-
-
-onAddParakeet : Zoo -> Zoo
-onAddParakeet zoo =
-    { zoo | parakeetCount = 1 + zoo.parakeetCount }
+onAddBeast : Zoo -> String -> Zoo
+onAddBeast zoo name =
+    let
+        addOne nb =
+            Just (1 + Maybe.withDefault 0 nb)
+    in
+        { zoo | population = Dict.update name addOne zoo.population }
 
 
 
