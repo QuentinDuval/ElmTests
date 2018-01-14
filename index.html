@@ -7768,8 +7768,269 @@ var _elm_lang$html$Html$details = _elm_lang$html$Html$node('details');
 var _elm_lang$html$Html$summary = _elm_lang$html$Html$node('summary');
 var _elm_lang$html$Html$menuitem = _elm_lang$html$Html$node('menuitem');
 var _elm_lang$html$Html$menu = _elm_lang$html$Html$node('menu');
-var _user$project$Elementary$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
-	_elm_lang$html$Html$text('Hello world'));
+var _elm_lang$html$Html_Events$keyCode = A2(_elm_lang$core$Json_Decode$field, 'keyCode', _elm_lang$core$Json_Decode$int);
+var _elm_lang$html$Html_Events$targetChecked = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'checked',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$bool);
+var _elm_lang$html$Html_Events$targetValue = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'value',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _elm_lang$html$Html_Events$defaultOptions = _elm_lang$virtual_dom$VirtualDom$defaultOptions;
+var _elm_lang$html$Html_Events$onWithOptions = _elm_lang$virtual_dom$VirtualDom$onWithOptions;
+var _elm_lang$html$Html_Events$on = _elm_lang$virtual_dom$VirtualDom$on;
+var _elm_lang$html$Html_Events$onFocus = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'focus',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onBlur = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'blur',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onSubmitOptions = _elm_lang$core$Native_Utils.update(
+	_elm_lang$html$Html_Events$defaultOptions,
+	{preventDefault: true});
+var _elm_lang$html$Html_Events$onSubmit = function (msg) {
+	return A3(
+		_elm_lang$html$Html_Events$onWithOptions,
+		'submit',
+		_elm_lang$html$Html_Events$onSubmitOptions,
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onCheck = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'change',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetChecked));
+};
+var _elm_lang$html$Html_Events$onInput = function (tagger) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'input',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$targetValue));
+};
+var _elm_lang$html$Html_Events$onMouseOut = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseout',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseOver = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseover',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseLeave = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseleave',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseEnter = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseenter',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseUp = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mouseup',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onMouseDown = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'mousedown',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onDoubleClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'dblclick',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$onClick = function (msg) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		_elm_lang$core$Json_Decode$succeed(msg));
+};
+var _elm_lang$html$Html_Events$Options = F2(
+	function (a, b) {
+		return {stopPropagation: a, preventDefault: b};
+	});
+var _user$project$Elementary$onAddParakeet = function (zoo) {
+	return _elm_lang$core$Native_Utils.update(
+		zoo,
+		{parakeetCount: 1 + zoo.parakeetCount});
+};
+var _user$project$Elementary$onAddSeaLion = function (zoo) {
+	return _elm_lang$core$Native_Utils.update(
+		zoo,
+		{seaLionCount: 1 + zoo.seaLionCount});
+};
+var _user$project$Elementary$onAddElephant = function (zoo) {
+	return _elm_lang$core$Native_Utils.update(
+		zoo,
+		{elephantCount: 1 + zoo.elephantCount});
+};
+var _user$project$Elementary$emptyZoo = {elephantCount: 0, seaLionCount: 0, parakeetCount: 0};
+var _user$project$Elementary$updateZoo = F2(
+	function (msg, zoo) {
+		var _p0 = msg;
+		if (_p0.ctor === 'AddBeast') {
+			return {
+				ctor: '_Tuple2',
+				_0: _p0._0(zoo),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {ctor: '_Tuple2', _0: _user$project$Elementary$emptyZoo, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _user$project$Elementary$initZoo = {ctor: '_Tuple2', _0: _user$project$Elementary$emptyZoo, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Elementary$Zoo = F3(
+	function (a, b, c) {
+		return {elephantCount: a, seaLionCount: b, parakeetCount: c};
+	});
+var _user$project$Elementary$ResetZoo = {ctor: 'ResetZoo'};
+var _user$project$Elementary$AddBeast = function (a) {
+	return {ctor: 'AddBeast', _0: a};
+};
+var _user$project$Elementary$viewPopulation = _elm_lang$core$List$map(
+	function (_p1) {
+		var _p2 = _p1;
+		var _p3 = _p2._0;
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_p3,
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							': ',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(_p2._1),
+								' ')))),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(
+								_user$project$Elementary$AddBeast(_p2._2)),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(_elm_lang$core$Basics_ops['++'], 'Add ', _p3)),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Elementary$viewZoo = function (zoo) {
+	var population = A2(
+		_elm_lang$core$List$intersperse,
+		A2(
+			_elm_lang$html$Html$br,
+			{ctor: '[]'},
+			{ctor: '[]'}),
+		_user$project$Elementary$viewPopulation(
+			{
+				ctor: '::',
+				_0: {ctor: '_Tuple3', _0: 'Elephant', _1: zoo.elephantCount, _2: _user$project$Elementary$onAddElephant},
+				_1: {
+					ctor: '::',
+					_0: {ctor: '_Tuple3', _0: 'Sea Lion', _1: zoo.seaLionCount, _2: _user$project$Elementary$onAddSeaLion},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple3', _0: 'Parakeet', _1: zoo.parakeetCount, _2: _user$project$Elementary$onAddParakeet},
+						_1: {ctor: '[]'}
+					}
+				}
+			}));
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h4,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Zoo population'),
+					_1: {ctor: '[]'}
+				}),
+			_1: A2(
+				_elm_lang$core$Basics_ops['++'],
+				population,
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$br,
+						{ctor: '[]'},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$button,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(_user$project$Elementary$ResetZoo),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Reset zoo'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				})
+		});
+};
+var _user$project$Elementary$main = _elm_lang$html$Html$program(
+	{
+		init: _user$project$Elementary$initZoo,
+		view: _user$project$Elementary$viewZoo,
+		update: _user$project$Elementary$updateZoo,
+		subscriptions: function (_p4) {
+			return _elm_lang$core$Platform_Sub$none;
+		}
+	})();
 var Elm = {};
 Elm['Elementary'] = Elm['Elementary'] || {};
 if (typeof _user$project$Elementary$main !== 'undefined') {
