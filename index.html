@@ -21069,9 +21069,39 @@ var _user$project$ZooGraph$zooPieChart = F2(
 		var _p1 = _p0;
 		var _p7 = _p1.pieWidth;
 		var _p6 = _p1.pieHeight;
-		var makeSlice = F2(
-			function (pieDatum, _p2) {
+		var pieCenter = {ctor: '_Tuple2', _0: _p7 / 2, _1: _p6 / 2};
+		var svgLabel = F2(
+			function (slice, _p2) {
 				var _p3 = _p2;
+				var sliceCentroid = _gampleman$elm_visualization$Visualization_Shape$centroid(slice);
+				return A2(
+					_elm_lang$svg$Svg$text_,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$transform(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'translate',
+								_elm_lang$core$Basics$toString(sliceCentroid))),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$dy('0.35em'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$textAnchor('middle'),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg$text(_p3.name),
+						_1: {ctor: '[]'}
+					});
+			});
+		var svgSlice = F2(
+			function (pieDatum, _p4) {
+				var _p5 = _p4;
 				return A2(
 					_elm_lang$svg$Svg$path,
 					{
@@ -21084,45 +21114,13 @@ var _user$project$ZooGraph$zooPieChart = F2(
 								A2(
 									_elm_lang$core$Basics_ops['++'],
 									'fill:',
-									A2(_elm_lang$core$Basics_ops['++'], _p3.fillColor, '; stroke: #fff;'))),
+									A2(_elm_lang$core$Basics_ops['++'], _p5.fillColor, '; stroke: #fff;'))),
 							_1: {ctor: '[]'}
 						}
 					},
 					{ctor: '[]'});
 			});
 		var radius = A2(_elm_lang$core$Basics$min, _p7, _p6) / 2;
-		var makeLabel = F2(
-			function (slice, _p4) {
-				var _p5 = _p4;
-				var sliceCentroid = _gampleman$elm_visualization$Visualization_Shape$centroid(
-					_elm_lang$core$Native_Utils.update(
-						slice,
-						{innerRadius: radius - 40, outerRadius: radius - 40}));
-				return A2(
-					_elm_lang$svg$Svg$text_,
-					{
-						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$transform(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'translate',
-								_elm_lang$core$Basics$toString(sliceCentroid))),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$dy('.70em'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$textAnchor('middle'),
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$svg$Svg$text(_p5.name),
-						_1: {ctor: '[]'}
-					});
-			});
 		var model = A2(
 			_elm_lang$core$List$filter,
 			function (slice) {
@@ -21133,7 +21131,7 @@ var _user$project$ZooGraph$zooPieChart = F2(
 			_gampleman$elm_visualization$Visualization_Shape$pie,
 			_elm_lang$core$Native_Utils.update(
 				_gampleman$elm_visualization$Visualization_Shape$defaultPieConfig,
-				{outerRadius: radius}),
+				{outerRadius: radius, innerRadius: radius / 2}),
 			A2(
 				_elm_lang$core$List$map,
 				_elm_lang$core$Basics$toFloat,
@@ -21150,17 +21148,8 @@ var _user$project$ZooGraph$zooPieChart = F2(
 				_0: _elm_lang$svg$Svg_Attributes$transform(
 					A2(
 						_elm_lang$core$Basics_ops['++'],
-						'translate(',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p7 / 2),
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								',',
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(_p6 / 2),
-									')'))))),
+						'translate ',
+						_elm_lang$core$Basics$toString(pieCenter))),
 				_1: {ctor: '[]'}
 			},
 			{
@@ -21168,13 +21157,13 @@ var _user$project$ZooGraph$zooPieChart = F2(
 				_0: A2(
 					_elm_lang$svg$Svg$g,
 					{ctor: '[]'},
-					A3(_elm_lang$core$List$map2, makeSlice, pieData, model)),
+					A3(_elm_lang$core$List$map2, svgSlice, pieData, model)),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$svg$Svg$g,
 						{ctor: '[]'},
-						A3(_elm_lang$core$List$map2, makeLabel, pieData, model)),
+						A3(_elm_lang$core$List$map2, svgLabel, pieData, model)),
 					_1: {ctor: '[]'}
 				}
 			});

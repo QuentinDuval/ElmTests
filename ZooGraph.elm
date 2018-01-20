@@ -36,27 +36,34 @@ zooPieChart { pieWidth, pieHeight } rawModel =
             model
                 |> List.map .value
                 |> List.map toFloat
-                |> Shape.pie { defaultPieConfig | outerRadius = radius }
+                |> Shape.pie
+                    { defaultPieConfig
+                        | outerRadius = radius
+                        , innerRadius = radius / 2
+                    }
 
-        makeSlice pieDatum { fillColor } =
+        svgSlice pieDatum { fillColor } =
             path
                 [ d (Shape.arc pieDatum)
                 , style ("fill:" ++ fillColor ++ "; stroke: #fff;")
                 ]
                 []
 
-        makeLabel slice { name } =
+        svgLabel slice { name } =
             let
                 sliceCentroid =
-                    Shape.centroid { slice | innerRadius = radius - 40, outerRadius = radius - 40 }
+                    Shape.centroid slice
             in
                 text_
-                    [ transform ("translate" ++ toString sliceCentroid), dy ".70em", textAnchor "middle" ]
+                    [ transform ("translate" ++ toString sliceCentroid), dy "0.35em", textAnchor "middle" ]
                     [ text name ]
+
+        pieCenter =
+            ( pieWidth / 2, pieHeight / 2 )
     in
-        g [ transform ("translate(" ++ toString (pieWidth / 2) ++ "," ++ toString (pieHeight / 2) ++ ")") ]
-            [ g [] <| List.map2 makeSlice pieData model
-            , g [] <| List.map2 makeLabel pieData model
+        g [ transform ("translate " ++ toString pieCenter) ]
+            [ g [] (List.map2 svgSlice pieData model)
+            , g [] (List.map2 svgLabel pieData model)
             ]
 
 
