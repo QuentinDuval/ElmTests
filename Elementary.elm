@@ -70,7 +70,7 @@ viewZoo zoo =
 populationPieSlices : Zoo -> List PieSlice
 populationPieSlices { population } =
     let
-        colors =
+        baseColors =
             [ "#98abc5"
             , "#8a89a6"
             , "#7b6888"
@@ -79,6 +79,12 @@ populationPieSlices { population } =
             , "#d0743c"
             , "#ff8c00"
             ]
+
+        colors =
+            List.concat <|
+                List.repeat
+                    (1 + Dict.size population // List.length baseColors)
+                    baseColors
     in
         List.map2
             (\( beast, nb ) c -> { name = beast, value = nb, fillColor = c })

@@ -21224,7 +21224,8 @@ var _user$project$Elementary$onAddBeast = F2(
 	});
 var _user$project$Elementary$populationPieSlices = function (_p0) {
 	var _p1 = _p0;
-	var colors = {
+	var _p4 = _p1.population;
+	var baseColors = {
 		ctor: '::',
 		_0: '#98abc5',
 		_1: {
@@ -21253,6 +21254,11 @@ var _user$project$Elementary$populationPieSlices = function (_p0) {
 			}
 		}
 	};
+	var colors = _elm_lang$core$List$concat(
+		A2(
+			_elm_lang$core$List$repeat,
+			1 + ((_elm_lang$core$Dict$size(_p4) / _elm_lang$core$List$length(baseColors)) | 0),
+			baseColors));
 	return A3(
 		_elm_lang$core$List$map2,
 		F2(
@@ -21260,7 +21266,7 @@ var _user$project$Elementary$populationPieSlices = function (_p0) {
 				var _p3 = _p2;
 				return {name: _p3._0, value: _p3._1, fillColor: c};
 			}),
-		_elm_lang$core$Dict$toList(_p1.population),
+		_elm_lang$core$Dict$toList(_p4),
 		colors);
 };
 var _user$project$Elementary$speciesCount = F2(
@@ -21294,11 +21300,11 @@ var _user$project$Elementary$emptyZoo = {
 };
 var _user$project$Elementary$updateZoo = F2(
 	function (msg, zoo) {
-		var _p4 = msg;
-		if (_p4.ctor === 'AddBeast') {
+		var _p5 = msg;
+		if (_p5.ctor === 'AddBeast') {
 			return {
 				ctor: '_Tuple2',
-				_0: A2(_user$project$Elementary$onAddBeast, zoo, _p4._0),
+				_0: A2(_user$project$Elementary$onAddBeast, zoo, _p5._0),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
@@ -21443,7 +21449,7 @@ var _user$project$Elementary$main = _elm_lang$html$Html$program(
 		init: _user$project$Elementary$initZoo,
 		view: _user$project$Elementary$viewZoo,
 		update: _user$project$Elementary$updateZoo,
-		subscriptions: function (_p5) {
+		subscriptions: function (_p6) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
