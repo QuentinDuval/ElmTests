@@ -21094,136 +21094,142 @@ var _user$project$ZooGraph$colors = _elm_lang$core$Array$fromList(
 			}
 		}
 	});
-var _user$project$ZooGraph$screenHeight = 600;
-var _user$project$ZooGraph$screenWidth = 800;
-var _user$project$ZooGraph$radius = A2(_elm_lang$core$Basics$min, _user$project$ZooGraph$screenWidth, _user$project$ZooGraph$screenHeight) / 2;
-var _user$project$ZooGraph$zooPieChart = function (model) {
-	var makeLabel = F2(
-		function (slice, _p0) {
-			var _p1 = _p0;
-			return A2(
-				_elm_lang$svg$Svg$text_,
-				{
-					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$transform(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'translate',
-							_elm_lang$core$Basics$toString(
-								_gampleman$elm_visualization$Visualization_Shape$centroid(
-									_elm_lang$core$Native_Utils.update(
-										slice,
-										{innerRadius: _user$project$ZooGraph$radius - 40, outerRadius: _user$project$ZooGraph$radius - 40}))))),
-					_1: {
+var _user$project$ZooGraph$zooPieChart = F2(
+	function (_p0, model) {
+		var _p1 = _p0;
+		var _p5 = _p1.pieWidth;
+		var _p4 = _p1.pieHeight;
+		var makeSlice = F2(
+			function (index, datum) {
+				return A2(
+					_elm_lang$svg$Svg$path,
+					{
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$dy('.35em'),
+						_0: _elm_lang$svg$Svg_Attributes$d(
+							_gampleman$elm_visualization$Visualization_Shape$arc(datum)),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$textAnchor('middle'),
-							_1: {ctor: '[]'}
-						}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$svg$Svg$text(_p1._0),
-					_1: {ctor: '[]'}
-				});
-		});
-	var makeSlice = F2(
-		function (index, datum) {
-			return A2(
-				_elm_lang$svg$Svg$path,
-				{
-					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$d(
-						_gampleman$elm_visualization$Visualization_Shape$arc(datum)),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$style(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'fill:',
+							_0: _elm_lang$svg$Svg_Attributes$style(
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									A2(
-										_elm_lang$core$Maybe$withDefault,
-										'#000',
-										A2(_elm_lang$core$Array$get, index, _user$project$ZooGraph$colors)),
-									'; stroke: #fff;'))),
-						_1: {ctor: '[]'}
-					}
-				},
-				{ctor: '[]'});
-		});
-	var pieData = A2(
-		_gampleman$elm_visualization$Visualization_Shape$pie,
-		_elm_lang$core$Native_Utils.update(
-			_gampleman$elm_visualization$Visualization_Shape$defaultPieConfig,
-			{outerRadius: _user$project$ZooGraph$radius}),
-		A2(
-			_elm_lang$core$List$map,
-			_elm_lang$core$Basics$toFloat,
-			A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$second, model)));
-	return A2(
-		_elm_lang$svg$Svg$svg,
-		{
-			ctor: '::',
-			_0: _elm_lang$svg$Svg_Attributes$width(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Basics$toString(_user$project$ZooGraph$screenWidth),
-					'px')),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$height(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(_user$project$ZooGraph$screenHeight),
-						'px')),
-				_1: {ctor: '[]'}
-			}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$svg$Svg$g,
-				{
-					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$transform(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'translate(',
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_user$project$ZooGraph$screenWidth / 2),
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									',',
+									'fill:',
 									A2(
 										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(_user$project$ZooGraph$screenHeight / 2),
-										')'))))),
-					_1: {ctor: '[]'}
-				},
-				{
+										A2(
+											_elm_lang$core$Maybe$withDefault,
+											'#000',
+											A2(_elm_lang$core$Array$get, index, _user$project$ZooGraph$colors)),
+										'; stroke: #fff;'))),
+							_1: {ctor: '[]'}
+						}
+					},
+					{ctor: '[]'});
+			});
+		var radius = A2(_elm_lang$core$Basics$min, _p5, _p4) / 2;
+		var pieData = A2(
+			_gampleman$elm_visualization$Visualization_Shape$pie,
+			_elm_lang$core$Native_Utils.update(
+				_gampleman$elm_visualization$Visualization_Shape$defaultPieConfig,
+				{outerRadius: radius}),
+			A2(
+				_elm_lang$core$List$map,
+				_elm_lang$core$Basics$toFloat,
+				A2(_elm_lang$core$List$map, _elm_lang$core$Tuple$second, model)));
+		var makeLabel = F2(
+			function (slice, _p2) {
+				var _p3 = _p2;
+				return A2(
+					_elm_lang$svg$Svg$text_,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$transform(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'translate',
+								_elm_lang$core$Basics$toString(
+									_gampleman$elm_visualization$Visualization_Shape$centroid(
+										_elm_lang$core$Native_Utils.update(
+											slice,
+											{innerRadius: radius - 40, outerRadius: radius - 40}))))),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$dy('.35em'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$textAnchor('middle'),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg$text(_p3._0),
+						_1: {ctor: '[]'}
+					});
+			});
+		return A2(
+			_elm_lang$svg$Svg$svg,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$width(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(_p5),
+						'px')),
+				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$svg$Svg$g,
-						{ctor: '[]'},
-						A2(_elm_lang$core$List$indexedMap, makeSlice, pieData)),
-					_1: {
+					_0: _elm_lang$svg$Svg_Attributes$height(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(_p4),
+							'px')),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$g,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$transform(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'translate(',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(_p5 / 2),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										',',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(_p4 / 2),
+											')'))))),
+						_1: {ctor: '[]'}
+					},
+					{
 						ctor: '::',
 						_0: A2(
 							_elm_lang$svg$Svg$g,
 							{ctor: '[]'},
-							A3(_elm_lang$core$List$map2, makeLabel, pieData, model)),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {ctor: '[]'}
-		});
-};
+							A2(_elm_lang$core$List$indexedMap, makeSlice, pieData)),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$svg$Svg$g,
+								{ctor: '[]'},
+								A3(_elm_lang$core$List$map2, makeLabel, pieData, model)),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$ZooGraph$PieArea = F2(
+	function (a, b) {
+		return {pieWidth: a, pieHeight: b};
+	});
 var _user$project$Elementary$onAddBeast = F2(
 	function (zoo, name) {
 		var addOne = function (nb) {
@@ -21385,20 +21391,22 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 									_elm_lang$svg$Svg$svg,
 									{
 										ctor: '::',
-										_0: _elm_lang$svg$Svg_Attributes$width('800'),
+										_0: _elm_lang$svg$Svg_Attributes$width('400'),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$svg$Svg_Attributes$height('600'),
+											_0: _elm_lang$svg$Svg_Attributes$height('400'),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 800 600'),
+												_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 400 400'),
 												_1: {ctor: '[]'}
 											}
 										}
 									},
 									{
 										ctor: '::',
-										_0: _user$project$ZooGraph$zooPieChart(
+										_0: A2(
+											_user$project$ZooGraph$zooPieChart,
+											{pieWidth: 400, pieHeight: 400},
 											_elm_lang$core$Dict$toList(zoo.population)),
 										_1: {ctor: '[]'}
 									}),

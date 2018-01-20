@@ -6,24 +6,18 @@ import Svg exposing (Svg, svg, g, path, text_, text)
 import Svg.Attributes exposing (transform, d, style, dy, width, height, textAnchor)
 
 
-screenWidth : Float
-screenWidth =
-    800
+type alias PieArea =
+    { pieWidth : Float
+    , pieHeight : Float
+    }
 
 
-screenHeight : Float
-screenHeight =
-    600
-
-
-radius : Float
-radius =
-    min screenWidth screenHeight / 2
-
-
-zooPieChart : List ( String, Int ) -> Svg msg
-zooPieChart model =
+zooPieChart : PieArea -> List ( String, Int ) -> Svg msg
+zooPieChart { pieWidth, pieHeight } model =
     let
+        radius =
+            min pieWidth pieHeight / 2
+
         pieData =
             model
                 |> List.map Tuple.second
@@ -31,7 +25,11 @@ zooPieChart model =
                 |> Shape.pie { defaultPieConfig | outerRadius = radius }
 
         makeSlice index datum =
-            path [ d (Shape.arc datum), style ("fill:" ++ (Maybe.withDefault "#000" <| Array.get index colors) ++ "; stroke: #fff;") ] []
+            path
+                [ d (Shape.arc datum)
+                , style ("fill:" ++ (Maybe.withDefault "#000" <| Array.get index colors) ++ "; stroke: #fff;")
+                ]
+                []
 
         makeLabel slice ( label, value ) =
             text_
@@ -41,8 +39,8 @@ zooPieChart model =
                 ]
                 [ text label ]
     in
-        svg [ width (toString screenWidth ++ "px"), height (toString screenHeight ++ "px") ]
-            [ g [ transform ("translate(" ++ toString (screenWidth / 2) ++ "," ++ toString (screenHeight / 2) ++ ")") ]
+        svg [ width (toString pieWidth ++ "px"), height (toString pieHeight ++ "px") ]
+            [ g [ transform ("translate(" ++ toString (pieWidth / 2) ++ "," ++ toString (pieHeight / 2) ++ ")") ]
                 [ g [] <| List.indexedMap makeSlice pieData
                 , g [] <| List.map2 makeLabel pieData model
                 ]

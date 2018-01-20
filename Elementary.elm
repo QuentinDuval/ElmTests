@@ -61,8 +61,8 @@ viewZoo zoo =
                    , button [ onClick ResetZoo ] [ text "Reset zoo" ]
                    , br [] []
                    , svg
-                        [ width "800", height "600", viewBox "0 0 800 600" ]
-                        [ zooPieChart (Dict.toList zoo.population) ]
+                        [ width "400", height "400", viewBox "0 0 400 400" ]
+                        [ zooPieChart { pieWidth = 400, pieHeight = 400 } (Dict.toList zoo.population) ]
                    ]
             )
 
