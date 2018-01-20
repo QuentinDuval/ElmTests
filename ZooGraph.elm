@@ -13,8 +13,11 @@ type alias PieArea =
 
 
 zooPieChart : PieArea -> List ( String, Int ) -> Svg msg
-zooPieChart { pieWidth, pieHeight } model =
+zooPieChart { pieWidth, pieHeight } rawModel =
     let
+        model =
+            List.filter (\( _, v ) -> v /= 0) rawModel
+
         radius =
             min pieWidth pieHeight / 2
 
