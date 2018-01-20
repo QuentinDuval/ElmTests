@@ -1,4 +1,9 @@
-module ZooGraph exposing (zooPieChart)
+module ZooGraph
+    exposing
+        ( PieSlice
+        , PieArea
+        , zooPieChart
+        )
 
 import Visualization.Shape as Shape exposing (defaultPieConfig)
 import Array exposing (Array)
@@ -12,72 +17,50 @@ type alias PieArea =
     }
 
 
-zooPieChart : PieArea -> List ( String, Int ) -> Svg msg
+type alias PieSlice =
+    { name : String
+    , value : Int
+    , fillColor : String
+    }
+
+
+zooPieChart : PieArea -> List PieSlice -> Svg msg
 zooPieChart { pieWidth, pieHeight } rawModel =
     let
         model =
-            List.filter (\( _, v ) -> v /= 0) rawModel
+            List.filter (\slice -> slice.value /= 0) rawModel
 
         radius =
             min pieWidth pieHeight / 2
 
         pieData =
             model
-                |> List.map Tuple.second
+                |> List.map .value
                 |> List.map toFloat
                 |> Shape.pie { defaultPieConfig | outerRadius = radius }
 
-        makeSlice index datum =
+        makeSlice pieDatum { fillColor } =
             path
-                [ d (Shape.arc datum)
-                , style ("fill:" ++ (Maybe.withDefault "#000" <| Array.get index colors) ++ "; stroke: #fff;")
+                [ d (Shape.arc pieDatum)
+                , style ("fill:" ++ fillColor ++ "; stroke: #fff;")
                 ]
                 []
 
-        makeLabel slice ( label, value ) =
+        makeLabel slice { name } =
             text_
                 [ transform ("translate" ++ toString (Shape.centroid { slice | innerRadius = radius - 40, outerRadius = radius - 40 }))
                 , dy ".35em"
                 , textAnchor "middle"
                 ]
-                [ text label ]
+                [ text name ]
     in
         svg [ width (toString pieWidth ++ "px"), height (toString pieHeight ++ "px") ]
             [ g [ transform ("translate(" ++ toString (pieWidth / 2) ++ "," ++ toString (pieHeight / 2) ++ ")") ]
-                [ g [] <| List.indexedMap makeSlice pieData
+                [ g [] <| List.map2 makeSlice pieData model
                 , g [] <| List.map2 makeLabel pieData model
                 ]
             ]
 
 
 
--- Could be provided by client
-
-
-colors : Array String
-colors =
-    Array.fromList
-        [ "#98abc5"
-        , "#8a89a6"
-        , "#7b6888"
-        , "#6b486b"
-        , "#a05d56"
-        , "#d0743c"
-        , "#ff8c00"
-        ]
-
-
-
-{-
-   model : List ( String, Float )
-   model =
-       [ ( "/notifications", 2704659 )
-       , ( "/about", 4499890 )
-       , ( "/product", 2159981 )
-       , ( "/blog", 3853788 )
-       , ( "/shop", 14106543 )
-       , ( "/profile", 8819342 )
-       , ( "/", 612463 )
-       ]
--}
 --

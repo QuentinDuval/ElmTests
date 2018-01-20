@@ -62,9 +62,28 @@ viewZoo zoo =
                    , br [] []
                    , svg
                         [ width "400", height "400", viewBox "0 0 400 400" ]
-                        [ zooPieChart { pieWidth = 400, pieHeight = 400 } (Dict.toList zoo.population) ]
+                        [ zooPieChart { pieWidth = 400, pieHeight = 400 } (populationPieSlices zoo) ]
                    ]
             )
+
+
+populationPieSlices : Zoo -> List PieSlice
+populationPieSlices { population } =
+    let
+        colors =
+            [ "#98abc5"
+            , "#8a89a6"
+            , "#7b6888"
+            , "#6b486b"
+            , "#a05d56"
+            , "#d0743c"
+            , "#ff8c00"
+            ]
+    in
+        List.map2
+            (\( beast, nb ) c -> { name = beast, value = nb, fillColor = c })
+            (Dict.toList population)
+            colors
 
 
 viewPopulation : Zoo -> List (Html ZooMsg)
