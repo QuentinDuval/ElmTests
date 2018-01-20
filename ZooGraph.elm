@@ -6,7 +6,6 @@ module ZooGraph
         )
 
 import Visualization.Shape as Shape exposing (defaultPieConfig)
-import Array exposing (Array)
 import Svg exposing (Svg, svg, g, path, text_, text)
 import Svg.Attributes exposing (transform, d, style, dy, width, height, textAnchor)
 
@@ -47,18 +46,17 @@ zooPieChart { pieWidth, pieHeight } rawModel =
                 []
 
         makeLabel slice { name } =
-            text_
-                [ transform ("translate" ++ toString (Shape.centroid { slice | innerRadius = radius - 40, outerRadius = radius - 40 }))
-                , dy ".35em"
-                , textAnchor "middle"
-                ]
-                [ text name ]
+            let
+                sliceCentroid =
+                    Shape.centroid { slice | innerRadius = radius - 40, outerRadius = radius - 40 }
+            in
+                text_
+                    [ transform ("translate" ++ toString sliceCentroid), dy ".70em", textAnchor "middle" ]
+                    [ text name ]
     in
-        svg [ width (toString pieWidth ++ "px"), height (toString pieHeight ++ "px") ]
-            [ g [ transform ("translate(" ++ toString (pieWidth / 2) ++ "," ++ toString (pieHeight / 2) ++ ")") ]
-                [ g [] <| List.map2 makeSlice pieData model
-                , g [] <| List.map2 makeLabel pieData model
-                ]
+        g [ transform ("translate(" ++ toString (pieWidth / 2) ++ "," ++ toString (pieHeight / 2) ++ ")") ]
+            [ g [] <| List.map2 makeSlice pieData model
+            , g [] <| List.map2 makeLabel pieData model
             ]
 
 
