@@ -55,7 +55,7 @@ zooPieChart { pieWidth, pieHeight } rawModel =
                     Shape.centroid slice
             in
                 text_
-                    [ transform ("translate" ++ toString sliceCentroid), dy "0.35em", textAnchor "middle" ]
+                    [ transform ("translate" ++ toString sliceCentroid), textAnchor "middle" ]
                     [ text name ]
 
         pieCenter =
