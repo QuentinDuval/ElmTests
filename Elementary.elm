@@ -3,6 +3,9 @@ module Elementary exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 import Dict exposing (Dict)
+import Svg exposing (svg)
+import Svg.Attributes exposing (width, height, viewBox)
+import ZooGraph exposing (..)
 
 
 main : Program Never Zoo ZooMsg
@@ -56,6 +59,10 @@ viewZoo zoo =
                 :: population
                 ++ [ br [] []
                    , button [ onClick ResetZoo ] [ text "Reset zoo" ]
+                   , br [] []
+                   , svg
+                        [ width "800", height "600", viewBox "0 0 800 600" ]
+                        [ zooPieChart (Dict.toList zoo.population) ]
                    ]
             )
 
