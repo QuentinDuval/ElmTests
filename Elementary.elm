@@ -58,6 +58,26 @@ species =
     [ "Elephant", "Sea Lion", "Parakeet" ]
 
 
+speciesColors : List String
+speciesColors =
+    let
+        -- TODO use the ColorScheme module
+        baseColors =
+            [ "#98abc5"
+            , "#8a89a6"
+            , "#7b6888"
+            , "#6b486b"
+            , "#a05d56"
+            , "#d0743c"
+            , "#ff8c00"
+            ]
+    in
+        List.concat <|
+            List.repeat
+                (1 + List.length species // List.length baseColors)
+                baseColors
+
+
 getCount : SpeciesName -> Population -> Int
 getCount beast =
     Dict.get beast >> Maybe.withDefault 0
@@ -67,9 +87,10 @@ reportProjection : Series PopulationByYear Int
 reportProjection =
     { key = Tuple.first
     , values =
-        List.map
-            (\beast -> { label = beast, accessor = Tuple.second >> getCount beast })
+        List.map2
+            (\beast color -> { label = beast, accessor = Tuple.second >> getCount beast, fillColor = color })
             species
+            speciesColors
     }
 
 
@@ -109,27 +130,10 @@ viewZoo zoo =
 
 populationPieSlices : Zoo -> List PieSlice
 populationPieSlices { population } =
-    let
-        baseColors =
-            [ "#98abc5"
-            , "#8a89a6"
-            , "#7b6888"
-            , "#6b486b"
-            , "#a05d56"
-            , "#d0743c"
-            , "#ff8c00"
-            ]
-
-        colors =
-            List.concat <|
-                List.repeat
-                    (1 + Dict.size population // List.length baseColors)
-                    baseColors
-    in
-        List.map2
-            (\( beast, nb ) c -> { name = beast, value = nb, fillColor = c })
-            (Dict.toList population)
-            colors
+    List.map2
+        (\( beast, nb ) c -> { name = beast, value = nb, fillColor = c })
+        (Dict.toList population)
+        speciesColors
 
 
 viewPopulation : Zoo -> List (Html ZooMsg)

@@ -1,8 +1,8 @@
 module StackedBars exposing (stackBars, Series)
 
+import Dict exposing (Dict)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
-import Color.Convert exposing (colorToCssRgb)
 import Visualization.Axis as Axis exposing (defaultOptions)
 import Visualization.Shape as Shape exposing (StackConfig, StackResult)
 import Visualization.Scale as Scale exposing (BandConfig, BandScale, ContinuousScale, defaultBandConfig)
@@ -12,12 +12,16 @@ import List.Extra as List
 --------------------------------------------------------------------------------
 -- Input data to stack
 --------------------------------------------------------------------------------
--- TODO: put the color in the series (let the outside decide which color to use)
 
 
 type alias Series a k =
     { key : a -> k
-    , values : List { label : String, accessor : a -> Int }
+    , values :
+        List
+            { label : String
+            , accessor : a -> Int
+            , fillColor : String
+            }
     }
 
 
@@ -43,49 +47,31 @@ samples inputData { values } =
 
 
 --------------------------------------------------------------------------------
--- A scheme to create a list of N colors
---------------------------------------------------------------------------------
-
-
-colors : Int -> List String
-colors size =
-    let
-        -- map values from [0..size - 1] to float values in [0..1]
-        lengthScale =
-            Scale.linear ( 0, toFloat size - 1 ) ( 0, 1 )
-
-        -- transform a float in [0..1] to a color
-        toColor progression =
-            Scale.viridisInterpolator (1 - progression)
-                |> colorToCssRgb
-    in
-        List.range 0 (size - 1)
-            |> List.map (toFloat >> Scale.convert lengthScale >> toColor)
-
-
-
---------------------------------------------------------------------------------
 -- Create a color for the provided year
 --------------------------------------------------------------------------------
 
 
-column : BandScale k -> ( k, List ( Float, Float ) ) -> Svg msg
-column xScale ( year, values ) =
+type alias ColumnBlock =
+    { label : String
+    , upperY : Float
+    , lowerY : Float
+    }
+
+
+column : BandScale key -> Dict String String -> ( key, List ColumnBlock ) -> Svg msg
+column xScale colorsByLabel ( key, taggedValues ) =
     let
-        makeBlock fillColor ( upperY, lowerY ) =
+        makeBlock { label, upperY, lowerY } =
             rect
-                [ x <| toString <| Scale.convert xScale year
+                [ x <| toString <| Scale.convert xScale key
                 , y <| toString <| lowerY
                 , width <| toString <| Scale.bandwidth xScale
                 , height <| toString <| (abs <| upperY - lowerY)
-                , fill fillColor
+                , fill (Dict.get label colorsByLabel |> Maybe.withDefault "#FFFFFF")
                 ]
-                []
-
-        blockColors =
-            colors (List.length values)
+                [ text_ [] [ text label ] ]
     in
-        g [] (List.map2 makeBlock blockColors values)
+        g [] (List.map makeBlock taggedValues)
 
 
 
@@ -104,19 +90,19 @@ stackBars canvas inputData series =
         { values, labels, extent } =
             Shape.stack (stackData inputData series)
 
+        keys =
+            List.map series.key inputData
+
+        colors =
+            Dict.fromList <|
+                List.map (\input -> ( input.label, input.fillColor )) series.values
+
         padding =
             { top = 30
             , left = 60
             , right = 30
             , bottom = 60
             }
-
-        -- transpose back to get the values per year
-        yearValues =
-            List.transpose values
-
-        years =
-            List.map series.key inputData
 
         xScale : BandScale k
         xScale =
@@ -125,7 +111,7 @@ stackBars canvas inputData series =
                     | paddingInner = 0.1
                     , paddingOuter = 0.2
                 }
-                years
+                keys
                 ( 0, canvas.width - (padding.top + padding.bottom) )
 
         yScale : ContinuousScale
@@ -150,16 +136,33 @@ stackBars canvas inputData series =
             yScale
                 |> Axis.axis { axisOptions | orientation = Axis.Left }
 
-        scaledValues =
-            yearValues
-                |> (List.map >> List.map)
-                    (\( y1, y2 ) -> ( Scale.convert yScale y1, Scale.convert yScale y2 ))
+        valuesByKey : List (List ( Float, Float ))
+        valuesByKey =
+            List.transpose values
+
+        columnValues : List (List ColumnBlock)
+        columnValues =
+            List.map
+                (\columnBlocks ->
+                    List.map2
+                        (\label ( y1, y2 ) ->
+                            { upperY = Scale.convert yScale y1
+                            , lowerY = Scale.convert yScale y2
+                            , label = label
+                            }
+                        )
+                        labels
+                        columnBlocks
+                )
+                valuesByKey
     in
         svg []
             [ g [ translate ( padding.left - 1, canvas.height - padding.bottom ) ] [ xAxis ]
             , g [ translate ( padding.left - 1, padding.top ) ] [ yAxis ]
             , g [ translate ( padding.left, padding.top ) ] <|
-                List.map (column xScale) (List.map2 (,) years scaledValues)
+                List.map
+                    (column xScale colors)
+                    (List.map2 (,) keys columnValues)
             ]
 
 
