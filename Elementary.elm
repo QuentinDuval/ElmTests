@@ -23,8 +23,12 @@ type alias Year =
     Int
 
 
+type alias SpeciesName =
+    String
+
+
 type alias Population =
-    Dict String Int
+    Dict SpeciesName Int
 
 
 type alias PopulationByYear =
@@ -54,9 +58,19 @@ species =
     [ "Elephant", "Sea Lion", "Parakeet" ]
 
 
-speciesCount : Zoo -> String -> Int
-speciesCount zoo name =
-    Maybe.withDefault 0 (Dict.get name zoo.population)
+getCount : SpeciesName -> Population -> Int
+getCount beast =
+    Dict.get beast >> Maybe.withDefault 0
+
+
+reportProjection : Series PopulationByYear Int
+reportProjection =
+    { key = Tuple.first
+    , values =
+        List.map
+            (\beast -> { label = beast, accessor = Tuple.second >> getCount beast })
+            species
+    }
 
 
 emptyZoo : Zoo
@@ -76,16 +90,6 @@ viewZoo zoo =
     let
         population =
             List.intersperse (br [] []) (viewPopulation zoo)
-
-        series : Series PopulationByYear Int
-        series =
-            { key = Tuple.first
-            , values =
-                [ { label = "Elephant", accessor = Tuple.second >> Dict.get "Elephant" >> Maybe.withDefault 0 }
-                , { label = "Sea Lion", accessor = Tuple.second >> Dict.get "Sea Lion" >> Maybe.withDefault 0 }
-                , { label = "Parakeet", accessor = Tuple.second >> Dict.get "Parakeet" >> Maybe.withDefault 0 }
-                ]
-            }
     in
         div []
             [ h4 [] [ text "Zoo population" ]
@@ -99,7 +103,7 @@ viewZoo zoo =
                 [ zooPieChart { pieWidth = 400, pieHeight = 400 } (populationPieSlices zoo) ]
             , svg
                 [ width "800", height "400", viewBox "0 0 800 400" ]
-                [ stackBars { width = 800, height = 400 } zoo.pastRecords series ]
+                [ stackBars { width = 800, height = 400 } zoo.pastRecords reportProjection ]
             ]
 
 
@@ -133,7 +137,7 @@ viewPopulation zoo =
     List.map
         (\beast ->
             div []
-                [ text (beast ++ ": " ++ toString (speciesCount zoo beast) ++ " ")
+                [ text (beast ++ ": " ++ toString (getCount beast zoo.population) ++ " ")
                 , button [ onClick (AddBeast beast (\x -> x + 1)) ] [ text " + " ]
                 , button [ onClick (AddBeast beast (\x -> x - 1)) ] [ text " - " ]
                 ]

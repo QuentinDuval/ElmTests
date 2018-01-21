@@ -30265,13 +30265,14 @@ var _user$project$Elementary$populationPieSlices = function (_p0) {
 		_elm_lang$core$Dict$toList(_p4),
 		colors);
 };
-var _user$project$Elementary$speciesCount = F2(
-	function (zoo, name) {
+var _user$project$Elementary$getCount = function (beast) {
+	return function (_p5) {
 		return A2(
 			_elm_lang$core$Maybe$withDefault,
 			0,
-			A2(_elm_lang$core$Dict$get, name, zoo.population));
-	});
+			A2(_elm_lang$core$Dict$get, beast, _p5));
+	};
+};
 var _user$project$Elementary$species = {
 	ctor: '::',
 	_0: 'Elephant',
@@ -30284,6 +30285,23 @@ var _user$project$Elementary$species = {
 			_1: {ctor: '[]'}
 		}
 	}
+};
+var _user$project$Elementary$reportProjection = {
+	key: _elm_lang$core$Tuple$first,
+	values: A2(
+		_elm_lang$core$List$map,
+		function (beast) {
+			return {
+				label: beast,
+				accessor: function (_p6) {
+					return A2(
+						_user$project$Elementary$getCount,
+						beast,
+						_elm_lang$core$Tuple$second(_p6));
+				}
+			};
+		},
+		_user$project$Elementary$species)
 };
 var _user$project$Elementary$emptyZoo = function () {
 	var startPopulation = _elm_lang$core$Dict$fromList(
@@ -30305,12 +30323,12 @@ var _user$project$Elementary$emptyZoo = function () {
 }();
 var _user$project$Elementary$updateZoo = F2(
 	function (msg, zoo) {
-		var _p5 = msg;
-		switch (_p5.ctor) {
+		var _p7 = msg;
+		switch (_p7.ctor) {
 			case 'AddBeast':
 				return {
 					ctor: '_Tuple2',
-					_0: A3(_user$project$Elementary$onAddBeast, zoo, _p5._0, _p5._1),
+					_0: A3(_user$project$Elementary$onAddBeast, zoo, _p7._0, _p7._1),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'ResetZoo':
@@ -30353,7 +30371,7 @@ var _user$project$Elementary$viewPopulation = function (zoo) {
 								A2(
 									_elm_lang$core$Basics_ops['++'],
 									_elm_lang$core$Basics$toString(
-										A2(_user$project$Elementary$speciesCount, zoo, beast)),
+										A2(_user$project$Elementary$getCount, beast, zoo.population)),
 									' ')))),
 					_1: {
 						ctor: '::',
@@ -30403,55 +30421,6 @@ var _user$project$Elementary$viewPopulation = function (zoo) {
 		_user$project$Elementary$species);
 };
 var _user$project$Elementary$viewZoo = function (zoo) {
-	var series = {
-		key: _elm_lang$core$Tuple$first,
-		values: {
-			ctor: '::',
-			_0: {
-				label: 'Elephant',
-				accessor: function (_p6) {
-					return A2(
-						_elm_lang$core$Maybe$withDefault,
-						0,
-						A2(
-							_elm_lang$core$Dict$get,
-							'Elephant',
-							_elm_lang$core$Tuple$second(_p6)));
-				}
-			},
-			_1: {
-				ctor: '::',
-				_0: {
-					label: 'Sea Lion',
-					accessor: function (_p7) {
-						return A2(
-							_elm_lang$core$Maybe$withDefault,
-							0,
-							A2(
-								_elm_lang$core$Dict$get,
-								'Sea Lion',
-								_elm_lang$core$Tuple$second(_p7)));
-					}
-				},
-				_1: {
-					ctor: '::',
-					_0: {
-						label: 'Parakeet',
-						accessor: function (_p8) {
-							return A2(
-								_elm_lang$core$Maybe$withDefault,
-								0,
-								A2(
-									_elm_lang$core$Dict$get,
-									'Parakeet',
-									_elm_lang$core$Tuple$second(_p8)));
-						}
-					},
-					_1: {ctor: '[]'}
-				}
-			}
-		}
-	};
 	var population = A2(
 		_elm_lang$core$List$intersperse,
 		A2(
@@ -30566,7 +30535,7 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 													_user$project$StackedBars$stackBars,
 													{width: 800, height: 400},
 													zoo.pastRecords,
-													series),
+													_user$project$Elementary$reportProjection),
 												_1: {ctor: '[]'}
 											}),
 										_1: {ctor: '[]'}
@@ -30584,7 +30553,7 @@ var _user$project$Elementary$main = _elm_lang$html$Html$program(
 		init: _user$project$Elementary$initZoo,
 		view: _user$project$Elementary$viewZoo,
 		update: _user$project$Elementary$updateZoo,
-		subscriptions: function (_p9) {
+		subscriptions: function (_p8) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
