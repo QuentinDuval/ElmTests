@@ -30372,8 +30372,7 @@ var _user$project$Elementary$viewPopulation = function (zoo) {
 							},
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									A2(_elm_lang$core$Basics_ops['++'], 'Add ', beast)),
+								_0: _elm_lang$html$Html$text(' + '),
 								_1: {ctor: '[]'}
 							}),
 						_1: {
@@ -30393,8 +30392,7 @@ var _user$project$Elementary$viewPopulation = function (zoo) {
 								},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(
-										A2(_elm_lang$core$Basics_ops['++'], 'Remove ', beast)),
+									_0: _elm_lang$html$Html$text(' - '),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
@@ -30474,10 +30472,13 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 					_0: _elm_lang$html$Html$text('Zoo population'),
 					_1: {ctor: '[]'}
 				}),
-			_1: A2(
-				_elm_lang$core$Basics_ops['++'],
-				population,
-				{
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					population),
+				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$html$Html$br,
@@ -30574,7 +30575,8 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 							}
 						}
 					}
-				})
+				}
+			}
 		});
 };
 var _user$project$Elementary$main = _elm_lang$html$Html$program(

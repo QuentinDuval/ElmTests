@@ -88,22 +88,19 @@ viewZoo zoo =
             }
     in
         div []
-            (h4 [] [ text "Zoo population" ]
-                :: population
-                ++ [ br [] []
-                   , button [ onClick ResetZoo ] [ text "Reset zoo" ]
-                   , button [ onClick AnnualReport ] [ text "Annual report" ]
-                   , br [] []
-                   , svg
-                        [ width "400", height "400", viewBox "0 0 400 400" ]
-                        [ zooPieChart { pieWidth = 400, pieHeight = 400 } (populationPieSlices zoo) ]
-
-                   -- TODO: sample the population with a button, and display the evoluation over time
-                   , svg
-                        [ width "800", height "400", viewBox "0 0 800 400" ]
-                        [ stackBars { width = 800, height = 400 } zoo.pastRecords series ]
-                   ]
-            )
+            [ h4 [] [ text "Zoo population" ]
+            , div [] population
+            , br [] []
+            , button [ onClick ResetZoo ] [ text "Reset zoo" ]
+            , button [ onClick AnnualReport ] [ text "Annual report" ]
+            , br [] []
+            , svg
+                [ width "400", height "400", viewBox "0 0 400 400" ]
+                [ zooPieChart { pieWidth = 400, pieHeight = 400 } (populationPieSlices zoo) ]
+            , svg
+                [ width "800", height "400", viewBox "0 0 800 400" ]
+                [ stackBars { width = 800, height = 400 } zoo.pastRecords series ]
+            ]
 
 
 populationPieSlices : Zoo -> List PieSlice
@@ -137,8 +134,8 @@ viewPopulation zoo =
         (\beast ->
             div []
                 [ text (beast ++ ": " ++ toString (speciesCount zoo beast) ++ " ")
-                , button [ onClick (AddBeast beast (\x -> x + 1)) ] [ text ("Add " ++ beast) ]
-                , button [ onClick (AddBeast beast (\x -> x - 1)) ] [ text ("Remove " ++ beast) ]
+                , button [ onClick (AddBeast beast (\x -> x + 1)) ] [ text " + " ]
+                , button [ onClick (AddBeast beast (\x -> x - 1)) ] [ text " - " ]
                 ]
         )
         species
