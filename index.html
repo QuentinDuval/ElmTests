@@ -21064,12 +21064,12 @@ var _gampleman$elm_visualization$Visualization_Shape$areaRadial = function (curv
 						_p5)));
 		});
 };
-var _user$project$ZooGraph$zooPieChart = F2(
-	function (_p0, rawModel) {
+var _user$project$PieChart$zooPieChart = F2(
+	function (_p0, rawData) {
 		var _p1 = _p0;
-		var _p7 = _p1.pieWidth;
-		var _p6 = _p1.pieHeight;
-		var pieCenter = {ctor: '_Tuple2', _0: _p7 / 2, _1: _p6 / 2};
+		var _p8 = _p1.pieWidth;
+		var _p7 = _p1.pieHeight;
+		var pieCenter = {ctor: '_Tuple2', _0: _p8 / 2, _1: _p7 / 2};
 		var svgLabel = F2(
 			function (slice, _p2) {
 				var _p3 = _p2;
@@ -21096,14 +21096,14 @@ var _user$project$ZooGraph$zooPieChart = F2(
 					});
 			});
 		var svgSlice = F2(
-			function (pieDatum, _p4) {
+			function (slice, _p4) {
 				var _p5 = _p4;
 				return A2(
 					_elm_lang$svg$Svg$path,
 					{
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$d(
-							_gampleman$elm_visualization$Visualization_Shape$arc(pieDatum)),
+							_gampleman$elm_visualization$Visualization_Shape$arc(slice)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$style(
@@ -21116,27 +21116,27 @@ var _user$project$ZooGraph$zooPieChart = F2(
 					},
 					{ctor: '[]'});
 			});
-		var radius = A2(_elm_lang$core$Basics$min, _p7, _p6) / 2;
+		var radius = A2(_elm_lang$core$Basics$min, _p8, _p7) / 2;
 		var model = A2(
 			_elm_lang$core$List$filter,
 			function (slice) {
 				return !_elm_lang$core$Native_Utils.eq(slice.value, 0);
 			},
-			rawModel);
-		var pieData = A2(
+			rawData);
+		var slices = A2(
 			_gampleman$elm_visualization$Visualization_Shape$pie,
 			_elm_lang$core$Native_Utils.update(
 				_gampleman$elm_visualization$Visualization_Shape$defaultPieConfig,
 				{outerRadius: radius, innerRadius: radius / 2}),
 			A2(
 				_elm_lang$core$List$map,
-				_elm_lang$core$Basics$toFloat,
-				A2(
-					_elm_lang$core$List$map,
-					function (_) {
-						return _.value;
-					},
-					model)));
+				function (_p6) {
+					return _elm_lang$core$Basics$toFloat(
+						function (_) {
+							return _.value;
+						}(_p6));
+				},
+				model));
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{
@@ -21153,22 +21153,22 @@ var _user$project$ZooGraph$zooPieChart = F2(
 				_0: A2(
 					_elm_lang$svg$Svg$g,
 					{ctor: '[]'},
-					A3(_elm_lang$core$List$map2, svgSlice, pieData, model)),
+					A3(_elm_lang$core$List$map2, svgSlice, slices, model)),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$svg$Svg$g,
 						{ctor: '[]'},
-						A3(_elm_lang$core$List$map2, svgLabel, pieData, model)),
+						A3(_elm_lang$core$List$map2, svgLabel, slices, model)),
 					_1: {ctor: '[]'}
 				}
 			});
 	});
-var _user$project$ZooGraph$PieArea = F2(
+var _user$project$PieChart$PieArea = F2(
 	function (a, b) {
 		return {pieWidth: a, pieHeight: b};
 	});
-var _user$project$ZooGraph$PieSlice = F3(
+var _user$project$PieChart$PieSlice = F3(
 	function (a, b, c) {
 		return {name: a, value: b, fillColor: c};
 	});
@@ -21394,7 +21394,7 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 									{
 										ctor: '::',
 										_0: A2(
-											_user$project$ZooGraph$zooPieChart,
+											_user$project$PieChart$zooPieChart,
 											{pieWidth: 400, pieHeight: 400},
 											_user$project$Elementary$populationPieSlices(zoo)),
 										_1: {ctor: '[]'}
