@@ -77,7 +77,7 @@ emptyZoo : Zoo
 emptyZoo =
     let
         startPopulation =
-            Dict.fromList (List.map (\b -> ( b, 1 )) species)
+            Dict.fromList (List.map (\b -> ( b, 10 )) species)
     in
         { population = startPopulation
         , currentYear = 2018
