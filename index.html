@@ -30190,11 +30190,27 @@ var _user$project$StackedBars$GraphArea = F2(
 	function (a, b) {
 		return {width: a, height: b};
 	});
-var _user$project$Elementary$onAddBeast = F2(
-	function (zoo, name) {
+var _user$project$Elementary$onAnnualReport = function (zoo) {
+	return _elm_lang$core$Native_Utils.update(
+		zoo,
+		{
+			currentYear: zoo.currentYear + 1,
+			pastRecords: A2(
+				_elm_lang$core$Basics_ops['++'],
+				zoo.pastRecords,
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: zoo.currentYear, _1: zoo.population},
+					_1: {ctor: '[]'}
+				})
+		});
+};
+var _user$project$Elementary$onAddBeast = F3(
+	function (zoo, name, inc) {
 		var addOne = function (nb) {
 			return _elm_lang$core$Maybe$Just(
-				1 + A2(_elm_lang$core$Maybe$withDefault, 0, nb));
+				inc(
+					A2(_elm_lang$core$Maybe$withDefault, 0, nb)));
 		};
 		return _elm_lang$core$Native_Utils.update(
 			zoo,
@@ -30269,40 +30285,55 @@ var _user$project$Elementary$species = {
 		}
 	}
 };
-var _user$project$Elementary$emptyZoo = {
-	population: _elm_lang$core$Dict$fromList(
+var _user$project$Elementary$emptyZoo = function () {
+	var startPopulation = _elm_lang$core$Dict$fromList(
 		A2(
 			_elm_lang$core$List$map,
 			function (b) {
 				return {ctor: '_Tuple2', _0: b, _1: 1};
 			},
-			_user$project$Elementary$species))
-};
+			_user$project$Elementary$species));
+	return {
+		population: startPopulation,
+		currentYear: 2018,
+		pastRecords: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 2017, _1: startPopulation},
+			_1: {ctor: '[]'}
+		}
+	};
+}();
 var _user$project$Elementary$updateZoo = F2(
 	function (msg, zoo) {
 		var _p5 = msg;
-		if (_p5.ctor === 'AddBeast') {
-			return {
-				ctor: '_Tuple2',
-				_0: A2(_user$project$Elementary$onAddBeast, zoo, _p5._0),
-				_1: _elm_lang$core$Platform_Cmd$none
-			};
-		} else {
-			return {ctor: '_Tuple2', _0: _user$project$Elementary$emptyZoo, _1: _elm_lang$core$Platform_Cmd$none};
+		switch (_p5.ctor) {
+			case 'AddBeast':
+				return {
+					ctor: '_Tuple2',
+					_0: A3(_user$project$Elementary$onAddBeast, zoo, _p5._0, _p5._1),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ResetZoo':
+				return {ctor: '_Tuple2', _0: _user$project$Elementary$emptyZoo, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Elementary$onAnnualReport(zoo),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$Elementary$initZoo = {ctor: '_Tuple2', _0: _user$project$Elementary$emptyZoo, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Elementary$Zoo = function (a) {
-	return {population: a};
-};
-var _user$project$Elementary$YearRecord = F4(
-	function (a, b, c, d) {
-		return {year: a, elephant: b, seaLion: c, parakeet: d};
+var _user$project$Elementary$Zoo = F3(
+	function (a, b, c) {
+		return {population: a, currentYear: b, pastRecords: c};
 	});
+var _user$project$Elementary$AnnualReport = {ctor: 'AnnualReport'};
 var _user$project$Elementary$ResetZoo = {ctor: 'ResetZoo'};
-var _user$project$Elementary$AddBeast = function (a) {
-	return {ctor: 'AddBeast', _0: a};
-};
+var _user$project$Elementary$AddBeast = F2(
+	function (a, b) {
+		return {ctor: 'AddBeast', _0: a, _1: b};
+	});
 var _user$project$Elementary$viewPopulation = function (zoo) {
 	return A2(
 		_elm_lang$core$List$map,
@@ -30331,7 +30362,12 @@ var _user$project$Elementary$viewPopulation = function (zoo) {
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html_Events$onClick(
-									_user$project$Elementary$AddBeast(beast)),
+									A2(
+										_user$project$Elementary$AddBeast,
+										beast,
+										function (x) {
+											return x + 1;
+										})),
 								_1: {ctor: '[]'}
 							},
 							{
@@ -30340,7 +30376,29 @@ var _user$project$Elementary$viewPopulation = function (zoo) {
 									A2(_elm_lang$core$Basics_ops['++'], 'Add ', beast)),
 								_1: {ctor: '[]'}
 							}),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(
+										A2(
+											_user$project$Elementary$AddBeast,
+											beast,
+											function (x) {
+												return x - 1;
+											})),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										A2(_elm_lang$core$Basics_ops['++'], 'Remove ', beast)),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
 					}
 				});
 		},
@@ -30348,75 +30406,50 @@ var _user$project$Elementary$viewPopulation = function (zoo) {
 };
 var _user$project$Elementary$viewZoo = function (zoo) {
 	var series = {
-		key: function (_) {
-			return _.year;
-		},
+		key: _elm_lang$core$Tuple$first,
 		values: {
 			ctor: '::',
 			_0: {
 				label: 'Elephant',
-				accessor: function (_) {
-					return _.elephant;
+				accessor: function (_p6) {
+					return A2(
+						_elm_lang$core$Maybe$withDefault,
+						0,
+						A2(
+							_elm_lang$core$Dict$get,
+							'Elephant',
+							_elm_lang$core$Tuple$second(_p6)));
 				}
 			},
 			_1: {
 				ctor: '::',
 				_0: {
 					label: 'Sea Lion',
-					accessor: function (_) {
-						return _.seaLion;
+					accessor: function (_p7) {
+						return A2(
+							_elm_lang$core$Maybe$withDefault,
+							0,
+							A2(
+								_elm_lang$core$Dict$get,
+								'Sea Lion',
+								_elm_lang$core$Tuple$second(_p7)));
 					}
 				},
 				_1: {
 					ctor: '::',
 					_0: {
 						label: 'Parakeet',
-						accessor: function (_) {
-							return _.parakeet;
+						accessor: function (_p8) {
+							return A2(
+								_elm_lang$core$Maybe$withDefault,
+								0,
+								A2(
+									_elm_lang$core$Dict$get,
+									'Parakeet',
+									_elm_lang$core$Tuple$second(_p8)));
 						}
 					},
 					_1: {ctor: '[]'}
-				}
-			}
-		}
-	};
-	var yearRecords = {
-		ctor: '::',
-		_0: A4(_user$project$Elementary$YearRecord, 2004, 16148, 95089, 401470),
-		_1: {
-			ctor: '::',
-			_0: A4(_user$project$Elementary$YearRecord, 2005, 16740, 94347, 417438),
-			_1: {
-				ctor: '::',
-				_0: A4(_user$project$Elementary$YearRecord, 2006, 17309, 94472, 449246),
-				_1: {
-					ctor: '::',
-					_0: A4(_user$project$Elementary$YearRecord, 2007, 17128, 92160, 447324),
-					_1: {
-						ctor: '::',
-						_0: A4(_user$project$Elementary$YearRecord, 2008, 16465, 90750, 443563),
-						_1: {
-							ctor: '::',
-							_0: A4(_user$project$Elementary$YearRecord, 2009, 15399, 89241, 408742),
-							_1: {
-								ctor: '::',
-								_0: A4(_user$project$Elementary$YearRecord, 2010, 14722, 85593, 369089),
-								_1: {
-									ctor: '::',
-									_0: A4(_user$project$Elementary$YearRecord, 2011, 14661, 84175, 354746),
-									_1: {
-										ctor: '::',
-										_0: A4(_user$project$Elementary$YearRecord, 2012, 14856, 85141, 355051),
-										_1: {
-											ctor: '::',
-											_0: A4(_user$project$Elementary$YearRecord, 2013, 14196, 79770, 345031),
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}
-						}
-					}
 				}
 			}
 		}
@@ -30467,61 +30500,76 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 						_1: {
 							ctor: '::',
 							_0: A2(
-								_elm_lang$html$Html$br,
-								{ctor: '[]'},
-								{ctor: '[]'}),
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(_user$project$Elementary$AnnualReport),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Annual report'),
+									_1: {ctor: '[]'}
+								}),
 							_1: {
 								ctor: '::',
 								_0: A2(
-									_elm_lang$svg$Svg$svg,
-									{
-										ctor: '::',
-										_0: _elm_lang$svg$Svg_Attributes$width('400'),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$svg$Svg_Attributes$height('400'),
-											_1: {
-												ctor: '::',
-												_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 400 400'),
-												_1: {ctor: '[]'}
-											}
-										}
-									},
-									{
-										ctor: '::',
-										_0: A2(
-											_user$project$PieChart$zooPieChart,
-											{pieWidth: 400, pieHeight: 400},
-											_user$project$Elementary$populationPieSlices(zoo)),
-										_1: {ctor: '[]'}
-									}),
+									_elm_lang$html$Html$br,
+									{ctor: '[]'},
+									{ctor: '[]'}),
 								_1: {
 									ctor: '::',
 									_0: A2(
 										_elm_lang$svg$Svg$svg,
 										{
 											ctor: '::',
-											_0: _elm_lang$svg$Svg_Attributes$width('800'),
+											_0: _elm_lang$svg$Svg_Attributes$width('400'),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$svg$Svg_Attributes$height('400'),
 												_1: {
 													ctor: '::',
-													_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 800 400'),
+													_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 400 400'),
 													_1: {ctor: '[]'}
 												}
 											}
 										},
 										{
 											ctor: '::',
-											_0: A3(
-												_user$project$StackedBars$stackBars,
-												{width: 800, height: 400},
-												yearRecords,
-												series),
+											_0: A2(
+												_user$project$PieChart$zooPieChart,
+												{pieWidth: 400, pieHeight: 400},
+												_user$project$Elementary$populationPieSlices(zoo)),
 											_1: {ctor: '[]'}
 										}),
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$svg$Svg$svg,
+											{
+												ctor: '::',
+												_0: _elm_lang$svg$Svg_Attributes$width('800'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$svg$Svg_Attributes$height('400'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$svg$Svg_Attributes$viewBox('0 0 800 400'),
+														_1: {ctor: '[]'}
+													}
+												}
+											},
+											{
+												ctor: '::',
+												_0: A3(
+													_user$project$StackedBars$stackBars,
+													{width: 800, height: 400},
+													zoo.pastRecords,
+													series),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
@@ -30534,7 +30582,7 @@ var _user$project$Elementary$main = _elm_lang$html$Html$program(
 		init: _user$project$Elementary$initZoo,
 		view: _user$project$Elementary$viewZoo,
 		update: _user$project$Elementary$updateZoo,
-		subscriptions: function (_p6) {
+		subscriptions: function (_p9) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();

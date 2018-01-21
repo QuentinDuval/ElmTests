@@ -19,14 +19,29 @@ main =
         }
 
 
+type alias Year =
+    Int
+
+
+type alias Population =
+    Dict String Int
+
+
+type alias PopulationByYear =
+    ( Year, Population )
+
+
 type alias Zoo =
-    { population : Dict String Int
+    { population : Population
+    , currentYear : Year
+    , pastRecords : List PopulationByYear
     }
 
 
 type ZooMsg
-    = AddBeast String
+    = AddBeast String (Int -> Int)
     | ResetZoo
+    | AnnualReport
 
 
 initZoo : ( Zoo, Cmd ZooMsg )
@@ -46,19 +61,14 @@ speciesCount zoo name =
 
 emptyZoo : Zoo
 emptyZoo =
-    { population = Dict.fromList (List.map (\b -> ( b, 1 )) species) }
-
-
-type alias Year =
-    Int
-
-
-type alias YearRecord =
-    { year : Year
-    , elephant : Int
-    , seaLion : Int
-    , parakeet : Int
-    }
+    let
+        startPopulation =
+            Dict.fromList (List.map (\b -> ( b, 1 )) species)
+    in
+        { population = startPopulation
+        , currentYear = 2018
+        , pastRecords = [ ( 2017, startPopulation ) ]
+        }
 
 
 viewZoo : Zoo -> Html ZooMsg
@@ -67,26 +77,13 @@ viewZoo zoo =
         population =
             List.intersperse (br [] []) (viewPopulation zoo)
 
-        yearRecords =
-            [ YearRecord 2004 16148 95089 401470
-            , YearRecord 2005 16740 94347 417438
-            , YearRecord 2006 17309 94472 449246
-            , YearRecord 2007 17128 92160 447324
-            , YearRecord 2008 16465 90750 443563
-            , YearRecord 2009 15399 89241 408742
-            , YearRecord 2010 14722 85593 369089
-            , YearRecord 2011 14661 84175 354746
-            , YearRecord 2012 14856 85141 355051
-            , YearRecord 2013 14196 79770 345031
-            ]
-
-        series : Series YearRecord Int
+        series : Series PopulationByYear Int
         series =
-            { key = .year
+            { key = Tuple.first
             , values =
-                [ { label = "Elephant", accessor = .elephant }
-                , { label = "Sea Lion", accessor = .seaLion }
-                , { label = "Parakeet", accessor = .parakeet }
+                [ { label = "Elephant", accessor = Tuple.second >> Dict.get "Elephant" >> Maybe.withDefault 0 }
+                , { label = "Sea Lion", accessor = Tuple.second >> Dict.get "Sea Lion" >> Maybe.withDefault 0 }
+                , { label = "Parakeet", accessor = Tuple.second >> Dict.get "Parakeet" >> Maybe.withDefault 0 }
                 ]
             }
     in
@@ -95,6 +92,7 @@ viewZoo zoo =
                 :: population
                 ++ [ br [] []
                    , button [ onClick ResetZoo ] [ text "Reset zoo" ]
+                   , button [ onClick AnnualReport ] [ text "Annual report" ]
                    , br [] []
                    , svg
                         [ width "400", height "400", viewBox "0 0 400 400" ]
@@ -103,7 +101,7 @@ viewZoo zoo =
                    -- TODO: sample the population with a button, and display the evoluation over time
                    , svg
                         [ width "800", height "400", viewBox "0 0 800 400" ]
-                        [ stackBars { width = 800, height = 400 } yearRecords series ]
+                        [ stackBars { width = 800, height = 400 } zoo.pastRecords series ]
                    ]
             )
 
@@ -139,7 +137,8 @@ viewPopulation zoo =
         (\beast ->
             div []
                 [ text (beast ++ ": " ++ toString (speciesCount zoo beast) ++ " ")
-                , button [ onClick (AddBeast beast) ] [ text ("Add " ++ beast) ]
+                , button [ onClick (AddBeast beast (\x -> x + 1)) ] [ text ("Add " ++ beast) ]
+                , button [ onClick (AddBeast beast (\x -> x - 1)) ] [ text ("Remove " ++ beast) ]
                 ]
         )
         species
@@ -148,20 +147,31 @@ viewPopulation zoo =
 updateZoo : ZooMsg -> Zoo -> ( Zoo, Cmd ZooMsg )
 updateZoo msg zoo =
     case msg of
-        AddBeast name ->
-            ( onAddBeast zoo name, Cmd.none )
+        AddBeast name inc ->
+            ( onAddBeast zoo name inc, Cmd.none )
 
         ResetZoo ->
             ( emptyZoo, Cmd.none )
 
+        AnnualReport ->
+            ( onAnnualReport zoo, Cmd.none )
 
-onAddBeast : Zoo -> String -> Zoo
-onAddBeast zoo name =
+
+onAddBeast : Zoo -> String -> (Int -> Int) -> Zoo
+onAddBeast zoo name inc =
     let
         addOne nb =
-            Just (1 + Maybe.withDefault 0 nb)
+            Just (inc <| Maybe.withDefault 0 nb)
     in
         { zoo | population = Dict.update name addOne zoo.population }
+
+
+onAnnualReport : Zoo -> Zoo
+onAnnualReport zoo =
+    { zoo
+        | currentYear = zoo.currentYear + 1
+        , pastRecords = zoo.pastRecords ++ [ ( zoo.currentYear, zoo.population ) ]
+    }
 
 
 
