@@ -6,13 +6,12 @@ import Color.Convert exposing (colorToCssRgb)
 import Visualization.Axis as Axis exposing (defaultOptions)
 import Visualization.Shape as Shape exposing (StackConfig, StackResult)
 import Visualization.Scale as Scale exposing (BandConfig, BandScale, ContinuousScale, defaultBandConfig)
-import Color exposing (Color)
 import List.Extra as List
 
 
-renderSvg : Svg msg
-renderSvg =
-    view (Shape.stack config)
+--------------------------------------------------------------------------------
+-- Input data
+--------------------------------------------------------------------------------
 
 
 type alias Year =
@@ -30,19 +29,6 @@ type alias CrimeRate =
     , larceny : Int
     , motorTheft : Int
     }
-
-
-type alias Series =
-    List { label : String, accessor : CrimeRate -> Int }
-
-
-series : Series
-series =
-    [ { label = "Assault", accessor = .assault }
-    , { label = "Rape", accessor = .rape }
-    , { label = "Robbery", accessor = .robbery }
-    , { label = "Murder", accessor = .murder }
-    ]
 
 
 crimeRates : List CrimeRate
@@ -70,36 +56,45 @@ crimeRates =
     ]
 
 
-samples : Series -> List ( String, List Float )
-samples =
-    List.map
-        (\{ label, accessor } -> ( label, List.map (toFloat << accessor) crimeRates ))
 
-
-canvas : { width : Float, height : Float }
-canvas =
-    { width = 800
-    , height = 400
-    }
-
-
-padding : { bottom : number, left : number1, right : number2, top : number3 }
-padding =
-    { top = 30
-    , left = 60
-    , right = 30
-    , bottom = 60
-    }
+--------------------------------------------------------------------------------
+-- Input data to stack
+--------------------------------------------------------------------------------
 
 
 config : StackConfig String
 config =
     { data = samples series
     , offset = Shape.stackOffsetNone
-    , order =
-        -- stylistic choice: largest (by sum of values) category at the bottom
-        List.sortBy (Tuple.second >> List.sum >> negate)
+
+    -- stylistic choice: largest (by sum of values) category at the bottom
+    , order = List.sortBy (Tuple.second >> List.sum >> negate)
     }
+
+
+samples : Series -> List ( String, List Float )
+samples =
+    List.map
+        (\{ label, accessor } -> ( label, List.map (toFloat << accessor) crimeRates ))
+
+
+type alias Series =
+    List { label : String, accessor : CrimeRate -> Int }
+
+
+series : Series
+series =
+    [ { label = "Assault", accessor = .assault }
+    , { label = "Rape", accessor = .rape }
+    , { label = "Robbery", accessor = .robbery }
+    , { label = "Murder", accessor = .murder }
+    ]
+
+
+
+--------------------------------------------------------------------------------
+-- A scheme to create a list of N colors
+--------------------------------------------------------------------------------
 
 
 colors : Int -> List String
@@ -109,6 +104,7 @@ colors size =
         lengthScale =
             Scale.linear ( 0, toFloat size - 1 ) ( 0, 1 )
 
+        -- transform a float in [0..1] to a color
         toColor progression =
             Scale.viridisInterpolator (1 - progression)
                 |> colorToCssRgb
@@ -117,25 +113,51 @@ colors size =
             |> List.map (toFloat >> Scale.convert lengthScale >> toColor)
 
 
+
+--------------------------------------------------------------------------------
+-- Create a color for the provided year
+--------------------------------------------------------------------------------
+
+
 column : BandScale Year -> ( Year, List ( Float, Float ) ) -> Svg msg
 column xScale ( year, values ) =
     let
-        block color ( upperY, lowerY ) =
+        makeBlock fillColor ( upperY, lowerY ) =
             rect
                 [ x <| toString <| Scale.convert xScale year
                 , y <| toString <| lowerY
                 , width <| toString <| Scale.bandwidth xScale
                 , height <| toString <| (abs <| upperY - lowerY)
-                , fill color
+                , fill fillColor
                 ]
                 []
+
+        blockColors =
+            colors (List.length values)
     in
-        g [] (List.map2 block (colors (List.length values)) values)
+        g [] (List.map2 makeBlock blockColors values)
 
 
-view : StackResult String -> Svg msg
-view { values, labels, extent } =
+
+--------------------------------------------------------------------------------
+-- Assemble the columns together with the axis
+--------------------------------------------------------------------------------
+
+
+type alias GraphArea =
+    { width : Float, height : Float }
+
+
+view : GraphArea -> StackResult String -> Svg msg
+view canvas { values, labels, extent } =
     let
+        padding =
+            { top = 30
+            , left = 60
+            , right = 30
+            , bottom = 60
+            }
+
         -- transpose back to get the values per year
         yearValues =
             List.transpose values
@@ -145,7 +167,13 @@ view { values, labels, extent } =
 
         xScale : BandScale Year
         xScale =
-            Scale.band { defaultBandConfig | paddingInner = 0.1, paddingOuter = 0.2 } years ( 0, canvas.width - (padding.top + padding.bottom) )
+            Scale.band
+                { defaultBandConfig
+                    | paddingInner = 0.1
+                    , paddingOuter = 0.2
+                }
+                years
+                ( 0, canvas.width - (padding.top + padding.bottom) )
 
         yScale : ContinuousScale
         yScale =
@@ -157,27 +185,38 @@ view { values, labels, extent } =
 
         xAxis : Svg msg
         xAxis =
-            Axis.axis { axisOptions | orientation = Axis.Bottom, tickCount = 10 } (Scale.toRenderable xScale)
+            Scale.toRenderable xScale
+                |> Axis.axis
+                    { axisOptions
+                        | orientation = Axis.Bottom
+                        , tickCount = 10
+                    }
 
         yAxis : Svg msg
         yAxis =
-            Axis.axis { axisOptions | orientation = Axis.Left } yScale
+            yScale
+                |> Axis.axis { axisOptions | orientation = Axis.Left }
 
         scaledValues =
-            List.map (List.map (\( y1, y2 ) -> ( Scale.convert yScale y1, Scale.convert yScale y2 ))) yearValues
+            yearValues
+                |> (List.map >> List.map)
+                    (\( y1, y2 ) -> ( Scale.convert yScale y1, Scale.convert yScale y2 ))
     in
-        svg [ width (toString canvas.width ++ "px"), height (toString canvas.height ++ "px") ]
-            [ g [ translate (padding.left - 1) (canvas.height - padding.bottom) ]
-                [ xAxis ]
-            , g [ translate (padding.left - 1) padding.top ]
-                [ yAxis ]
-            , g [ translate padding.left padding.top, class "series" ] <|
+        svg []
+            [ g [ translate ( padding.left - 1, canvas.height - padding.bottom ) ] [ xAxis ]
+            , g [ translate ( padding.left - 1, padding.top ) ] [ yAxis ]
+            , g [ translate ( padding.left, padding.top ) ] <|
                 List.map (column xScale) (List.map2 (,) years scaledValues)
             ]
 
 
-translate : number -> number -> Svg.Attribute msg
-translate x y =
+renderSvg : GraphArea -> Svg msg
+renderSvg area =
+    view area (Shape.stack config)
+
+
+translate : ( number, number ) -> Svg.Attribute msg
+translate ( x, y ) =
     transform ("translate " ++ toString ( x, y ))
 
 

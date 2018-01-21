@@ -68,7 +68,7 @@ viewZoo zoo =
                    -- TODO: sample the population with a button, and display the evoluation over time
                    , svg
                         [ width "800", height "400", viewBox "0 0 800 400" ]
-                        [ renderSvg ]
+                        [ renderSvg { width = 800, height = 400 } ]
                    ]
             )
 

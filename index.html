@@ -29956,15 +29956,15 @@ var _user$project$PieChart$PieSlice = F3(
 	function (a, b, c) {
 		return {name: a, value: b, fillColor: c};
 	});
-var _user$project$StackedBars$translate = F2(
-	function (x, y) {
-		return _elm_lang$svg$Svg_Attributes$transform(
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'translate ',
-				_elm_lang$core$Basics$toString(
-					{ctor: '_Tuple2', _0: x, _1: y})));
-	});
+var _user$project$StackedBars$translate = function (_p0) {
+	var _p1 = _p0;
+	return _elm_lang$svg$Svg_Attributes$transform(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'translate ',
+			_elm_lang$core$Basics$toString(
+				{ctor: '_Tuple2', _0: _p1._0, _1: _p1._1})));
+};
 var _user$project$StackedBars$colors = function (size) {
 	var toColor = function (progression) {
 		return _eskimoblood$elm_color_extra$Color_Convert$colorToCssRgb(
@@ -29980,34 +29980,36 @@ var _user$project$StackedBars$colors = function (size) {
 		{ctor: '_Tuple2', _0: 0, _1: 1});
 	return A2(
 		_elm_lang$core$List$map,
-		function (_p0) {
+		function (_p2) {
 			return toColor(
 				A2(
 					_gampleman$elm_visualization$Visualization_Scale$convert,
 					lengthScale,
-					_elm_lang$core$Basics$toFloat(_p0)));
+					_elm_lang$core$Basics$toFloat(_p2)));
 		},
 		A2(_elm_lang$core$List$range, 0, size - 1));
 };
 var _user$project$StackedBars$column = F2(
-	function (xScale, _p1) {
-		var _p2 = _p1;
-		var _p6 = _p2._1;
-		var block = F2(
-			function (color, _p3) {
-				var _p4 = _p3;
-				var _p5 = _p4._1;
+	function (xScale, _p3) {
+		var _p4 = _p3;
+		var _p8 = _p4._1;
+		var blockColors = _user$project$StackedBars$colors(
+			_elm_lang$core$List$length(_p8));
+		var makeBlock = F2(
+			function (fillColor, _p5) {
+				var _p6 = _p5;
+				var _p7 = _p6._1;
 				return A2(
 					_elm_lang$svg$Svg$rect,
 					{
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$x(
 							_elm_lang$core$Basics$toString(
-								A2(_gampleman$elm_visualization$Visualization_Scale$convert, xScale, _p2._0))),
+								A2(_gampleman$elm_visualization$Visualization_Scale$convert, xScale, _p4._0))),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$y(
-								_elm_lang$core$Basics$toString(_p5)),
+								_elm_lang$core$Basics$toString(_p7)),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$svg$Svg_Attributes$width(
@@ -30017,10 +30019,10 @@ var _user$project$StackedBars$column = F2(
 									ctor: '::',
 									_0: _elm_lang$svg$Svg_Attributes$height(
 										_elm_lang$core$Basics$toString(
-											_elm_lang$core$Basics$abs(_p4._0 - _p5))),
+											_elm_lang$core$Basics$abs(_p6._0 - _p7))),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$svg$Svg_Attributes$fill(color),
+										_0: _elm_lang$svg$Svg_Attributes$fill(fillColor),
 										_1: {ctor: '[]'}
 									}
 								}
@@ -30032,15 +30034,8 @@ var _user$project$StackedBars$column = F2(
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{ctor: '[]'},
-			A3(
-				_elm_lang$core$List$map2,
-				block,
-				_user$project$StackedBars$colors(
-					_elm_lang$core$List$length(_p6)),
-				_p6));
+			A3(_elm_lang$core$List$map2, makeBlock, blockColors, _p8));
 	});
-var _user$project$StackedBars$padding = {top: 30, left: 60, right: 30, bottom: 60};
-var _user$project$StackedBars$canvas = {width: 800, height: 400};
 var _user$project$StackedBars$series = {
 	ctor: '::',
 	_0: {
@@ -30164,16 +30159,16 @@ var _user$project$StackedBars$crimeRates = {
 	}
 };
 var _user$project$StackedBars$samples = _elm_lang$core$List$map(
-	function (_p7) {
-		var _p8 = _p7;
+	function (_p9) {
+		var _p10 = _p9;
 		return {
 			ctor: '_Tuple2',
-			_0: _p8.label,
+			_0: _p10.label,
 			_1: A2(
 				_elm_lang$core$List$map,
-				function (_p9) {
+				function (_p11) {
 					return _elm_lang$core$Basics$toFloat(
-						_p8.accessor(_p9));
+						_p10.accessor(_p11));
 				},
 				_user$project$StackedBars$crimeRates)
 		};
@@ -30182,106 +30177,81 @@ var _user$project$StackedBars$config = {
 	data: _user$project$StackedBars$samples(_user$project$StackedBars$series),
 	offset: _gampleman$elm_visualization$Visualization_Shape$stackOffsetNone,
 	order: _elm_lang$core$List$sortBy(
-		function (_p10) {
+		function (_p12) {
 			return _elm_lang$core$Basics$negate(
 				_elm_lang$core$List$sum(
-					_elm_lang$core$Tuple$second(_p10)));
+					_elm_lang$core$Tuple$second(_p12)));
 		})
 };
-var _user$project$StackedBars$view = function (_p11) {
-	var _p12 = _p11;
-	var axisOptions = _gampleman$elm_visualization$Visualization_Axis$defaultOptions;
-	var yScale = A3(
-		_elm_lang$core$Basics$flip,
-		_gampleman$elm_visualization$Visualization_Scale$nice,
-		4,
-		A2(
-			_gampleman$elm_visualization$Visualization_Scale$linear,
-			_p12.extent,
-			{ctor: '_Tuple2', _0: _user$project$StackedBars$canvas.height - (_user$project$StackedBars$padding.left + _user$project$StackedBars$padding.right), _1: 0}));
-	var yAxis = A2(
-		_gampleman$elm_visualization$Visualization_Axis$axis,
-		_elm_lang$core$Native_Utils.update(
-			axisOptions,
-			{orientation: _gampleman$elm_visualization$Visualization_Axis$Left}),
-		yScale);
-	var years = A2(
-		_elm_lang$core$List$map,
-		function (_) {
-			return _.year;
-		},
-		_user$project$StackedBars$crimeRates);
-	var xScale = A3(
-		_gampleman$elm_visualization$Visualization_Scale$band,
-		_elm_lang$core$Native_Utils.update(
-			_gampleman$elm_visualization$Visualization_Scale$defaultBandConfig,
-			{paddingInner: 0.1, paddingOuter: 0.2}),
-		years,
-		{ctor: '_Tuple2', _0: 0, _1: _user$project$StackedBars$canvas.width - (_user$project$StackedBars$padding.top + _user$project$StackedBars$padding.bottom)});
-	var xAxis = A2(
-		_gampleman$elm_visualization$Visualization_Axis$axis,
-		_elm_lang$core$Native_Utils.update(
-			axisOptions,
-			{orientation: _gampleman$elm_visualization$Visualization_Axis$Bottom, tickCount: 10}),
-		_gampleman$elm_visualization$Visualization_Scale$toRenderable(xScale));
-	var yearValues = _elm_community$list_extra$List_Extra$transpose(_p12.values);
-	var scaledValues = A2(
-		_elm_lang$core$List$map,
-		_elm_lang$core$List$map(
-			function (_p13) {
-				var _p14 = _p13;
+var _user$project$StackedBars$view = F2(
+	function (canvas, _p13) {
+		var _p14 = _p13;
+		var axisOptions = _gampleman$elm_visualization$Visualization_Axis$defaultOptions;
+		var years = A2(
+			_elm_lang$core$List$map,
+			function (_) {
+				return _.year;
+			},
+			_user$project$StackedBars$crimeRates);
+		var yearValues = _elm_community$list_extra$List_Extra$transpose(_p14.values);
+		var padding = {top: 30, left: 60, right: 30, bottom: 60};
+		var xScale = A3(
+			_gampleman$elm_visualization$Visualization_Scale$band,
+			_elm_lang$core$Native_Utils.update(
+				_gampleman$elm_visualization$Visualization_Scale$defaultBandConfig,
+				{paddingInner: 0.1, paddingOuter: 0.2}),
+			years,
+			{ctor: '_Tuple2', _0: 0, _1: canvas.width - (padding.top + padding.bottom)});
+		var xAxis = A2(
+			_gampleman$elm_visualization$Visualization_Axis$axis,
+			_elm_lang$core$Native_Utils.update(
+				axisOptions,
+				{orientation: _gampleman$elm_visualization$Visualization_Axis$Bottom, tickCount: 10}),
+			_gampleman$elm_visualization$Visualization_Scale$toRenderable(xScale));
+		var yScale = A3(
+			_elm_lang$core$Basics$flip,
+			_gampleman$elm_visualization$Visualization_Scale$nice,
+			4,
+			A2(
+				_gampleman$elm_visualization$Visualization_Scale$linear,
+				_p14.extent,
+				{ctor: '_Tuple2', _0: canvas.height - (padding.left + padding.right), _1: 0}));
+		var yAxis = A2(
+			_gampleman$elm_visualization$Visualization_Axis$axis,
+			_elm_lang$core$Native_Utils.update(
+				axisOptions,
+				{orientation: _gampleman$elm_visualization$Visualization_Axis$Left}),
+			yScale);
+		var scaledValues = A2(
+			function (_p15) {
+				return _elm_lang$core$List$map(
+					_elm_lang$core$List$map(_p15));
+			},
+			function (_p16) {
+				var _p17 = _p16;
 				return {
 					ctor: '_Tuple2',
-					_0: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p14._0),
-					_1: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p14._1)
+					_0: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p17._0),
+					_1: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p17._1)
 				};
-			}),
-		yearValues);
-	return A2(
-		_elm_lang$svg$Svg$svg,
-		{
-			ctor: '::',
-			_0: _elm_lang$svg$Svg_Attributes$width(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Basics$toString(_user$project$StackedBars$canvas.width),
-					'px')),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$height(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(_user$project$StackedBars$canvas.height),
-						'px')),
-				_1: {ctor: '[]'}
-			}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$svg$Svg$g,
-				{
-					ctor: '::',
-					_0: A2(_user$project$StackedBars$translate, _user$project$StackedBars$padding.left - 1, _user$project$StackedBars$canvas.height - _user$project$StackedBars$padding.bottom),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: xAxis,
-					_1: {ctor: '[]'}
-				}),
-			_1: {
+			},
+			yearValues);
+		return A2(
+			_elm_lang$svg$Svg$svg,
+			{ctor: '[]'},
+			{
 				ctor: '::',
 				_0: A2(
 					_elm_lang$svg$Svg$g,
 					{
 						ctor: '::',
-						_0: A2(_user$project$StackedBars$translate, _user$project$StackedBars$padding.left - 1, _user$project$StackedBars$padding.top),
+						_0: _user$project$StackedBars$translate(
+							{ctor: '_Tuple2', _0: padding.left - 1, _1: canvas.height - padding.bottom}),
 						_1: {ctor: '[]'}
 					},
 					{
 						ctor: '::',
-						_0: yAxis,
+						_0: xAxis,
 						_1: {ctor: '[]'}
 					}),
 				_1: {
@@ -30290,31 +30260,51 @@ var _user$project$StackedBars$view = function (_p11) {
 						_elm_lang$svg$Svg$g,
 						{
 							ctor: '::',
-							_0: A2(_user$project$StackedBars$translate, _user$project$StackedBars$padding.left, _user$project$StackedBars$padding.top),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$class('series'),
-								_1: {ctor: '[]'}
-							}
+							_0: _user$project$StackedBars$translate(
+								{ctor: '_Tuple2', _0: padding.left - 1, _1: padding.top}),
+							_1: {ctor: '[]'}
 						},
-						A2(
-							_elm_lang$core$List$map,
-							_user$project$StackedBars$column(xScale),
-							A3(
-								_elm_lang$core$List$map2,
-								F2(
-									function (v0, v1) {
-										return {ctor: '_Tuple2', _0: v0, _1: v1};
-									}),
-								years,
-								scaledValues))),
-					_1: {ctor: '[]'}
+						{
+							ctor: '::',
+							_0: yAxis,
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$svg$Svg$g,
+							{
+								ctor: '::',
+								_0: _user$project$StackedBars$translate(
+									{ctor: '_Tuple2', _0: padding.left, _1: padding.top}),
+								_1: {ctor: '[]'}
+							},
+							A2(
+								_elm_lang$core$List$map,
+								_user$project$StackedBars$column(xScale),
+								A3(
+									_elm_lang$core$List$map2,
+									F2(
+										function (v0, v1) {
+											return {ctor: '_Tuple2', _0: v0, _1: v1};
+										}),
+									years,
+									scaledValues))),
+						_1: {ctor: '[]'}
+					}
 				}
-			}
-		});
+			});
+	});
+var _user$project$StackedBars$renderSvg = function (area) {
+	return A2(
+		_user$project$StackedBars$view,
+		area,
+		_gampleman$elm_visualization$Visualization_Shape$stack(_user$project$StackedBars$config));
 };
-var _user$project$StackedBars$renderSvg = _user$project$StackedBars$view(
-	_gampleman$elm_visualization$Visualization_Shape$stack(_user$project$StackedBars$config));
+var _user$project$StackedBars$GraphArea = F2(
+	function (a, b) {
+		return {width: a, height: b};
+	});
 var _user$project$Elementary$onAddBeast = F2(
 	function (zoo, name) {
 		var addOne = function (nb) {
@@ -30561,7 +30551,8 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 										},
 										{
 											ctor: '::',
-											_0: _user$project$StackedBars$renderSvg,
+											_0: _user$project$StackedBars$renderSvg(
+												{width: 800, height: 400}),
 											_1: {ctor: '[]'}
 										}),
 									_1: {ctor: '[]'}
