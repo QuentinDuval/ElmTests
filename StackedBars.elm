@@ -7,6 +7,7 @@ import Visualization.Axis as Axis exposing (defaultOptions)
 import Visualization.Shape as Shape exposing (StackConfig, StackResult)
 import Visualization.Scale as Scale exposing (BandConfig, BandScale, ContinuousScale, defaultBandConfig)
 import List.Extra as List
+import SvgUtils exposing (..)
 
 
 --------------------------------------------------------------------------------
@@ -165,11 +166,6 @@ stackBars canvas inputData series =
                     (column xScale colors)
                     (List.map2 (,) keys columnValues)
             ]
-
-
-translate : ( number, number ) -> Svg.Attribute msg
-translate ( x, y ) =
-    transform ("translate " ++ toString ( x, y ))
 
 
 

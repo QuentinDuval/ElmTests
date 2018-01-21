@@ -8,6 +8,7 @@ module PieChart
 import Visualization.Shape as Shape exposing (defaultPieConfig)
 import Svg exposing (Svg, svg, g, path, text_, text)
 import Svg.Attributes exposing (transform, d, style, dy, width, height, textAnchor)
+import SvgUtils exposing (..)
 
 
 type alias PieArea =
@@ -55,13 +56,13 @@ zooPieChart { pieWidth, pieHeight } rawData =
                     Shape.centroid slice
             in
                 text_
-                    [ transform ("translate" ++ toString sliceCentroid), textAnchor "middle" ]
+                    [ translate sliceCentroid, textAnchor "middle" ]
                     [ text name ]
 
         pieCenter =
             ( pieWidth / 2, pieHeight / 2 )
     in
-        g [ transform ("translate " ++ toString pieCenter) ]
+        g [ translate pieCenter ]
             [ g [] (List.map2 svgSlice slices model)
             , g [] (List.map2 svgLabel slices model)
             ]

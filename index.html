@@ -29378,6 +29378,15 @@ var _gampleman$elm_visualization$Visualization_Shape$areaRadial = function (curv
 						_p5)));
 		});
 };
+var _user$project$SvgUtils$translate = function (_p0) {
+	var _p1 = _p0;
+	return _elm_lang$svg$Svg_Attributes$transform(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'translate ',
+			_elm_lang$core$Basics$toString(
+				{ctor: '_Tuple2', _0: _p1._0, _1: _p1._1})));
+};
 var _user$project$PieChart$zooPieChart = F2(
 	function (_p0, rawData) {
 		var _p1 = _p0;
@@ -29392,11 +29401,7 @@ var _user$project$PieChart$zooPieChart = F2(
 					_elm_lang$svg$Svg$text_,
 					{
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$transform(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'translate',
-								_elm_lang$core$Basics$toString(sliceCentroid))),
+						_0: _user$project$SvgUtils$translate(sliceCentroid),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$textAnchor('middle'),
@@ -29460,11 +29465,7 @@ var _user$project$PieChart$zooPieChart = F2(
 			_elm_lang$svg$Svg$g,
 			{
 				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$transform(
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						'translate ',
-						_elm_lang$core$Basics$toString(pieCenter))),
+				_0: _user$project$SvgUtils$translate(pieCenter),
 				_1: {ctor: '[]'}
 			},
 			{
@@ -29491,32 +29492,23 @@ var _user$project$PieChart$PieSlice = F3(
 	function (a, b, c) {
 		return {name: a, value: b, fillColor: c};
 	});
-var _user$project$StackedBars$translate = function (_p0) {
-	var _p1 = _p0;
-	return _elm_lang$svg$Svg_Attributes$transform(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'translate ',
-			_elm_lang$core$Basics$toString(
-				{ctor: '_Tuple2', _0: _p1._0, _1: _p1._1})));
-};
 var _user$project$StackedBars$column = F3(
-	function (xScale, colorsByLabel, _p2) {
-		var _p3 = _p2;
-		var makeBlock = function (_p4) {
-			var _p5 = _p4;
-			var _p6 = _p5.lowerY;
+	function (xScale, colorsByLabel, _p0) {
+		var _p1 = _p0;
+		var makeBlock = function (_p2) {
+			var _p3 = _p2;
+			var _p4 = _p3.lowerY;
 			return A2(
 				_elm_lang$svg$Svg$rect,
 				{
 					ctor: '::',
 					_0: _elm_lang$svg$Svg_Attributes$x(
 						_elm_lang$core$Basics$toString(
-							A2(_gampleman$elm_visualization$Visualization_Scale$convert, xScale, _p3._0))),
+							A2(_gampleman$elm_visualization$Visualization_Scale$convert, xScale, _p1._0))),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$y(
-							_elm_lang$core$Basics$toString(_p6)),
+							_elm_lang$core$Basics$toString(_p4)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$width(
@@ -29526,14 +29518,14 @@ var _user$project$StackedBars$column = F3(
 								ctor: '::',
 								_0: _elm_lang$svg$Svg_Attributes$height(
 									_elm_lang$core$Basics$toString(
-										_elm_lang$core$Basics$abs(_p5.upperY - _p6))),
+										_elm_lang$core$Basics$abs(_p3.upperY - _p4))),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$svg$Svg_Attributes$fill(
 										A2(
 											_elm_lang$core$Maybe$withDefault,
 											'#FFFFFF',
-											A2(_elm_lang$core$Dict$get, _p5.label, colorsByLabel))),
+											A2(_elm_lang$core$Dict$get, _p3.label, colorsByLabel))),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -29545,34 +29537,34 @@ var _user$project$StackedBars$column = F3(
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{ctor: '[]'},
-			A2(_elm_lang$core$List$map, makeBlock, _p3._1));
+			A2(_elm_lang$core$List$map, makeBlock, _p1._1));
 	});
 var _user$project$StackedBars$samples = F2(
-	function (inputData, _p7) {
-		var _p8 = _p7;
+	function (inputData, _p5) {
+		var _p6 = _p5;
 		return A2(
 			_elm_lang$core$List$map,
-			function (_p9) {
-				var _p10 = _p9;
+			function (_p7) {
+				var _p8 = _p7;
 				return {
 					ctor: '_Tuple2',
-					_0: _p10.label,
+					_0: _p8.label,
 					_1: A2(
 						_elm_lang$core$List$map,
-						function (_p11) {
+						function (_p9) {
 							return _elm_lang$core$Basics$toFloat(
-								_p10.accessor(_p11));
+								_p8.accessor(_p9));
 						},
 						inputData)
 				};
 			},
-			_p8.values);
+			_p6.values);
 	});
 var _user$project$StackedBars$largestAtBottom = _elm_lang$core$List$sortBy(
-	function (_p12) {
+	function (_p10) {
 		return _elm_lang$core$Basics$negate(
 			_elm_lang$core$List$sum(
-				_elm_lang$core$Tuple$second(_p12)));
+				_elm_lang$core$Tuple$second(_p10)));
 	});
 var _user$project$StackedBars$stackData = F2(
 	function (inputData, series) {
@@ -29607,11 +29599,11 @@ var _user$project$StackedBars$stackBars = F3(
 				axisOptions,
 				{orientation: _gampleman$elm_visualization$Visualization_Axis$Bottom, tickCount: 10}),
 			_gampleman$elm_visualization$Visualization_Scale$toRenderable(xScale));
-		var _p13 = _gampleman$elm_visualization$Visualization_Shape$stack(
+		var _p11 = _gampleman$elm_visualization$Visualization_Shape$stack(
 			A2(_user$project$StackedBars$stackData, inputData, series));
-		var values = _p13.values;
-		var labels = _p13.labels;
-		var extent = _p13.extent;
+		var values = _p11.values;
+		var labels = _p11.labels;
+		var extent = _p11.extent;
 		var yScale = A3(
 			_elm_lang$core$Basics$flip,
 			_gampleman$elm_visualization$Visualization_Scale$nice,
@@ -29633,11 +29625,11 @@ var _user$project$StackedBars$stackBars = F3(
 				return A3(
 					_elm_lang$core$List$map2,
 					F2(
-						function (label, _p14) {
-							var _p15 = _p14;
+						function (label, _p12) {
+							var _p13 = _p12;
 							return {
-								upperY: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p15._0),
-								lowerY: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p15._1),
+								upperY: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p13._0),
+								lowerY: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p13._1),
 								label: label
 							};
 						}),
@@ -29654,7 +29646,7 @@ var _user$project$StackedBars$stackBars = F3(
 					_elm_lang$svg$Svg$g,
 					{
 						ctor: '::',
-						_0: _user$project$StackedBars$translate(
+						_0: _user$project$SvgUtils$translate(
 							{ctor: '_Tuple2', _0: padding.left - 1, _1: canvas.height - padding.bottom}),
 						_1: {ctor: '[]'}
 					},
@@ -29669,7 +29661,7 @@ var _user$project$StackedBars$stackBars = F3(
 						_elm_lang$svg$Svg$g,
 						{
 							ctor: '::',
-							_0: _user$project$StackedBars$translate(
+							_0: _user$project$SvgUtils$translate(
 								{ctor: '_Tuple2', _0: padding.left - 1, _1: padding.top}),
 							_1: {ctor: '[]'}
 						},
@@ -29684,7 +29676,7 @@ var _user$project$StackedBars$stackBars = F3(
 							_elm_lang$svg$Svg$g,
 							{
 								ctor: '::',
-								_0: _user$project$StackedBars$translate(
+								_0: _user$project$SvgUtils$translate(
 									{ctor: '_Tuple2', _0: padding.left, _1: padding.top}),
 								_1: {ctor: '[]'}
 							},
