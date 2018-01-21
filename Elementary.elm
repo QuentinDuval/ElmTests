@@ -49,11 +49,46 @@ emptyZoo =
     { population = Dict.fromList (List.map (\b -> ( b, 1 )) species) }
 
 
+type alias Year =
+    Int
+
+
+type alias YearRecord =
+    { year : Year
+    , elephant : Int
+    , seaLion : Int
+    , parakeet : Int
+    }
+
+
 viewZoo : Zoo -> Html ZooMsg
 viewZoo zoo =
     let
         population =
             List.intersperse (br [] []) (viewPopulation zoo)
+
+        yearRecords =
+            [ YearRecord 2004 16148 95089 401470
+            , YearRecord 2005 16740 94347 417438
+            , YearRecord 2006 17309 94472 449246
+            , YearRecord 2007 17128 92160 447324
+            , YearRecord 2008 16465 90750 443563
+            , YearRecord 2009 15399 89241 408742
+            , YearRecord 2010 14722 85593 369089
+            , YearRecord 2011 14661 84175 354746
+            , YearRecord 2012 14856 85141 355051
+            , YearRecord 2013 14196 79770 345031
+            ]
+
+        series : Series YearRecord Int
+        series =
+            { key = .year
+            , values =
+                [ { label = "Elephant", accessor = .elephant }
+                , { label = "Sea Lion", accessor = .seaLion }
+                , { label = "Parakeet", accessor = .parakeet }
+                ]
+            }
     in
         div []
             (h4 [] [ text "Zoo population" ]
@@ -68,7 +103,7 @@ viewZoo zoo =
                    -- TODO: sample the population with a button, and display the evoluation over time
                    , svg
                         [ width "800", height "400", viewBox "0 0 800 400" ]
-                        [ renderSvg { width = 800, height = 400 } ]
+                        [ stackBars { width = 800, height = 400 } yearRecords series ]
                    ]
             )
 
