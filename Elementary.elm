@@ -6,6 +6,7 @@ import Dict exposing (Dict)
 import Svg exposing (svg)
 import Svg.Attributes exposing (width, height, viewBox)
 import PieChart exposing (..)
+import StackedBars exposing (..)
 
 
 main : Program Never Zoo ZooMsg
@@ -45,7 +46,7 @@ speciesCount zoo name =
 
 emptyZoo : Zoo
 emptyZoo =
-    { population = Dict.fromList (List.map (\b -> ( b, 0 )) species) }
+    { population = Dict.fromList (List.map (\b -> ( b, 1 )) species) }
 
 
 viewZoo : Zoo -> Html ZooMsg
@@ -63,6 +64,11 @@ viewZoo zoo =
                    , svg
                         [ width "400", height "400", viewBox "0 0 400 400" ]
                         [ zooPieChart { pieWidth = 400, pieHeight = 400 } (populationPieSlices zoo) ]
+
+                   -- TODO: sample the population with a button, and display the evoluation over time
+                   , svg
+                        [ width "800", height "400", viewBox "0 0 800 400" ]
+                        [ renderSvg ]
                    ]
             )
 
