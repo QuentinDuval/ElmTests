@@ -20,13 +20,16 @@ type alias Series a k =
     }
 
 
+largestAtBottom : List ( k, List number ) -> List ( k, List number )
+largestAtBottom =
+    List.sortBy (Tuple.second >> List.sum >> negate)
+
+
 stackData : List a -> Series a k -> StackConfig String
 stackData inputData series =
     { data = samples inputData series
     , offset = Shape.stackOffsetNone
-
-    -- stylistic choice: largest (by sum of values) category at the bottom
-    , order = List.sortBy (Tuple.second >> List.sum >> negate)
+    , order = largestAtBottom
     }
 
 

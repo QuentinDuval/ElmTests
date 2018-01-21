@@ -30057,17 +30057,18 @@ var _user$project$StackedBars$samples = F2(
 			},
 			_p10.values);
 	});
+var _user$project$StackedBars$largestAtBottom = _elm_lang$core$List$sortBy(
+	function (_p14) {
+		return _elm_lang$core$Basics$negate(
+			_elm_lang$core$List$sum(
+				_elm_lang$core$Tuple$second(_p14)));
+	});
 var _user$project$StackedBars$stackData = F2(
 	function (inputData, series) {
 		return {
 			data: A2(_user$project$StackedBars$samples, inputData, series),
 			offset: _gampleman$elm_visualization$Visualization_Shape$stackOffsetNone,
-			order: _elm_lang$core$List$sortBy(
-				function (_p14) {
-					return _elm_lang$core$Basics$negate(
-						_elm_lang$core$List$sum(
-							_elm_lang$core$Tuple$second(_p14)));
-				})
+			order: _user$project$StackedBars$largestAtBottom
 		};
 	});
 var _user$project$StackedBars$stackBars = F3(
