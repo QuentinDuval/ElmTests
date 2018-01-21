@@ -55,7 +55,7 @@ initZoo =
 
 species : List String
 species =
-    [ "Elephant", "Sea Lion", "Parakeet" ]
+    List.sort [ "Elephant", "Sea Lion", "Parakeet" ]
 
 
 speciesColors : List String
