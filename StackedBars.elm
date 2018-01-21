@@ -12,6 +12,7 @@ import List.Extra as List
 --------------------------------------------------------------------------------
 -- Input data to stack
 --------------------------------------------------------------------------------
+-- TODO: put the color in the series (let the outside decide which color to use)
 
 
 type alias Series a k =
