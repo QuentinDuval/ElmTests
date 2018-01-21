@@ -34,11 +34,12 @@ zooPieChart { pieWidth, pieHeight } rawData =
 
         slices =
             model
-                |> List.map (.value >> toFloat)
                 |> Shape.pie
                     { defaultPieConfig
                         | outerRadius = radius
                         , innerRadius = radius / 2
+                        , sortingFn = (\a b -> compare a.name b.name)
+                        , valueFn = (.value >> toFloat)
                     }
 
         svgSlice slice { fillColor } =

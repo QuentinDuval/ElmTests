@@ -12,6 +12,7 @@ import List.Extra as List
 --------------------------------------------------------------------------------
 -- Input data to stack
 --------------------------------------------------------------------------------
+-- TODO : add legend
 
 
 type alias Series a k =
@@ -69,7 +70,7 @@ column xScale colorsByLabel ( key, taggedValues ) =
                 , height <| toString <| (abs <| upperY - lowerY)
                 , fill (Dict.get label colorsByLabel |> Maybe.withDefault "#FFFFFF")
                 ]
-                [ text_ [] [ text label ] ]
+                []
     in
         g [] (List.map makeBlock taggedValues)
 
