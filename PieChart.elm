@@ -1,4 +1,4 @@
-module ZooGraph
+module PieChart
     exposing
         ( PieSlice
         , PieArea
@@ -24,27 +24,26 @@ type alias PieSlice =
 
 
 zooPieChart : PieArea -> List PieSlice -> Svg msg
-zooPieChart { pieWidth, pieHeight } rawModel =
+zooPieChart { pieWidth, pieHeight } rawData =
     let
         model =
-            List.filter (\slice -> slice.value /= 0) rawModel
+            List.filter (\slice -> slice.value /= 0) rawData
 
         radius =
             min pieWidth pieHeight / 2
 
-        pieData =
+        slices =
             model
-                |> List.map .value
-                |> List.map toFloat
+                |> List.map (.value >> toFloat)
                 |> Shape.pie
                     { defaultPieConfig
                         | outerRadius = radius
                         , innerRadius = radius / 2
                     }
 
-        svgSlice pieDatum { fillColor } =
+        svgSlice slice { fillColor } =
             path
-                [ d (Shape.arc pieDatum)
+                [ d (Shape.arc slice)
                 , style ("fill:" ++ fillColor ++ "; stroke: #fff;")
                 ]
                 []
@@ -62,8 +61,8 @@ zooPieChart { pieWidth, pieHeight } rawModel =
             ( pieWidth / 2, pieHeight / 2 )
     in
         g [ transform ("translate " ++ toString pieCenter) ]
-            [ g [] (List.map2 svgSlice pieData model)
-            , g [] (List.map2 svgLabel pieData model)
+            [ g [] (List.map2 svgSlice slices model)
+            , g [] (List.map2 svgLabel slices model)
             ]
 
 

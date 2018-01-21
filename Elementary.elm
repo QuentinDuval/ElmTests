@@ -5,7 +5,7 @@ import Html.Events exposing (..)
 import Dict exposing (Dict)
 import Svg exposing (svg)
 import Svg.Attributes exposing (width, height, viewBox)
-import ZooGraph exposing (..)
+import PieChart exposing (..)
 
 
 main : Program Never Zoo ZooMsg
