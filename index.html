@@ -29405,7 +29405,7 @@ var _user$project$PieChart$zooPieChart = F2(
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$textAnchor('middle'),
-							_1: {ctor: '[]'}
+							_1: _p3.fontAttributes
 						}
 					},
 					{
@@ -29488,9 +29488,9 @@ var _user$project$PieChart$PieArea = F2(
 	function (a, b) {
 		return {pieWidth: a, pieHeight: b};
 	});
-var _user$project$PieChart$PieSlice = F3(
-	function (a, b, c) {
-		return {name: a, value: b, fillColor: c};
+var _user$project$PieChart$PieSlice = F4(
+	function (a, b, c, d) {
+		return {name: a, value: b, fillColor: c, fontAttributes: d};
 	});
 var _user$project$StackedBars$column = F3(
 	function (xScale, colorsByLabel, _p0) {
@@ -29801,7 +29801,24 @@ var _user$project$Elementary$populationPieSlices = function (_p1) {
 		F2(
 			function (_p3, c) {
 				var _p4 = _p3;
-				return {name: _p4._0, value: _p4._1, fillColor: c};
+				return {
+					name: _p4._0,
+					value: _p4._1,
+					fillColor: c,
+					fontAttributes: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$fontSize('20px'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$fontFamily('Verdata'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$fill('#FFFFFF'),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				};
 			}),
 		_elm_lang$core$Dict$toList(_p2.population),
 		_user$project$Elementary$speciesColors);

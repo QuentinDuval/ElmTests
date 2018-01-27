@@ -17,14 +17,19 @@ type alias PieArea =
     }
 
 
-type alias PieSlice =
+type alias Color =
+    String
+
+
+type alias PieSlice msg =
     { name : String
     , value : Int
     , fillColor : String
+    , fontAttributes : List (Svg.Attribute msg)
     }
 
 
-zooPieChart : PieArea -> List PieSlice -> Svg msg
+zooPieChart : PieArea -> List (PieSlice msg) -> Svg msg
 zooPieChart { pieWidth, pieHeight } rawData =
     let
         model =
@@ -50,13 +55,13 @@ zooPieChart { pieWidth, pieHeight } rawData =
                 ]
                 []
 
-        svgLabel slice { name } =
+        svgLabel slice { name, fontAttributes } =
             let
                 sliceCentroid =
                     Shape.centroid slice
             in
                 text_
-                    [ translate sliceCentroid, textAnchor "middle" ]
+                    (translate sliceCentroid :: textAnchor "middle" :: fontAttributes)
                     [ text name ]
 
         pieCenter =

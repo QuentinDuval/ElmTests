@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Events exposing (..)
 import Dict exposing (Dict)
 import Svg exposing (svg)
-import Svg.Attributes exposing (width, height, viewBox)
+import Svg.Attributes as Svg exposing (width, height, viewBox)
 import PieChart exposing (..)
 import StackedBars exposing (..)
 
@@ -128,10 +128,20 @@ viewZoo zoo =
             ]
 
 
-populationPieSlices : Zoo -> List PieSlice
+populationPieSlices : Zoo -> List (PieSlice msg)
 populationPieSlices { population } =
     List.map2
-        (\( beast, nb ) c -> { name = beast, value = nb, fillColor = c })
+        (\( beast, nb ) c ->
+            { name = beast
+            , value = nb
+            , fillColor = c
+            , fontAttributes =
+                [ Svg.fontSize "20px"
+                , Svg.fontFamily "Verdata"
+                , Svg.fill "#FFFFFF"
+                ]
+            }
+        )
         (Dict.toList population)
         speciesColors
 
