@@ -68,10 +68,10 @@ column xScale colorsByLabel ( key, taggedValues ) =
     let
         makeBlock { label, upperY, lowerY } =
             rect
-                [ x <| toString <| Scale.convert xScale key
-                , y <| toString <| lowerY
-                , width <| toString <| Scale.bandwidth xScale
-                , height <| toString <| (abs <| upperY - lowerY)
+                [ x := Scale.convert xScale key
+                , y := lowerY
+                , width := Scale.bandwidth xScale
+                , height := abs (upperY - lowerY)
                 , fill (Dict.get label colorsByLabel |> Maybe.withDefault "#FFFFFF")
                 ]
                 []
