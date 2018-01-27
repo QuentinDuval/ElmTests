@@ -16,6 +16,7 @@ import SvgUtils exposing (..)
 -- TODO : add legend (and configuration to decide whether you want one)
 -- TODO : parameter to decide whether the bars are stacked or side by side
 -- TODO : add possiblity to parameterize the font size
+-- TODO : use relative positions
 
 
 type alias Series a k =
