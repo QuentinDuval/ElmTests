@@ -5,20 +5,23 @@ module PieChart
         , zooPieChart
         )
 
-import Visualization.Shape as Shape exposing (defaultPieConfig)
 import Svg exposing (Svg, svg, g, path, text_, text)
-import Svg.Attributes exposing (transform, d, style, dy, width, height, textAnchor)
+import Svg.Attributes as Svg exposing (d, style, textAnchor)
 import SvgUtils exposing (..)
+import Visualization.Shape as Shape exposing (defaultPieConfig)
+
+
+{-
+   Creates a simple pie chart, declaratively, given:
+   * The overall shape of the pie via `PieArea`
+   * The information about each pie in `PieSlice`
+-}
 
 
 type alias PieArea =
-    { pieWidth : Float
-    , pieHeight : Float
+    { outerRadius : Float
+    , innerRadius : Float
     }
-
-
-type alias Color =
-    String
 
 
 type alias PieSlice msg =
@@ -30,20 +33,20 @@ type alias PieSlice msg =
 
 
 zooPieChart : PieArea -> List (PieSlice msg) -> Svg msg
-zooPieChart { pieWidth, pieHeight } rawData =
+zooPieChart { outerRadius, innerRadius } rawData =
     let
+        pieCenter =
+            ( outerRadius, outerRadius )
+
         model =
             List.filter (\slice -> slice.value /= 0) rawData
-
-        radius =
-            min pieWidth pieHeight / 2
 
         slices =
             model
                 |> Shape.pie
                     { defaultPieConfig
-                        | outerRadius = radius
-                        , innerRadius = radius / 2
+                        | outerRadius = outerRadius
+                        , innerRadius = innerRadius
                         , sortingFn = (\a b -> compare a.name b.name)
                         , valueFn = (.value >> toFloat)
                     }
@@ -63,9 +66,6 @@ zooPieChart { pieWidth, pieHeight } rawData =
                 text_
                     (translate sliceCentroid :: textAnchor "middle" :: fontAttributes)
                     [ text name ]
-
-        pieCenter =
-            ( pieWidth / 2, pieHeight / 2 )
     in
         g [ translate pieCenter ]
             [ g [] (List.map2 svgSlice slices model)

@@ -29390,9 +29390,7 @@ var _user$project$SvgUtils$translate = function (_p0) {
 var _user$project$PieChart$zooPieChart = F2(
 	function (_p0, rawData) {
 		var _p1 = _p0;
-		var _p8 = _p1.pieWidth;
-		var _p7 = _p1.pieHeight;
-		var pieCenter = {ctor: '_Tuple2', _0: _p8 / 2, _1: _p7 / 2};
+		var _p7 = _p1.outerRadius;
 		var svgLabel = F2(
 			function (slice, _p2) {
 				var _p3 = _p2;
@@ -29435,7 +29433,6 @@ var _user$project$PieChart$zooPieChart = F2(
 					},
 					{ctor: '[]'});
 			});
-		var radius = A2(_elm_lang$core$Basics$min, _p8, _p7) / 2;
 		var model = A2(
 			_elm_lang$core$List$filter,
 			function (slice) {
@@ -29447,8 +29444,8 @@ var _user$project$PieChart$zooPieChart = F2(
 			_elm_lang$core$Native_Utils.update(
 				_gampleman$elm_visualization$Visualization_Shape$defaultPieConfig,
 				{
-					outerRadius: radius,
-					innerRadius: radius / 2,
+					outerRadius: _p7,
+					innerRadius: _p1.innerRadius,
 					sortingFn: F2(
 						function (a, b) {
 							return A2(_elm_lang$core$Basics$compare, a.name, b.name);
@@ -29461,6 +29458,7 @@ var _user$project$PieChart$zooPieChart = F2(
 					}
 				}),
 			model);
+		var pieCenter = {ctor: '_Tuple2', _0: _p7, _1: _p7};
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{
@@ -29486,7 +29484,7 @@ var _user$project$PieChart$zooPieChart = F2(
 	});
 var _user$project$PieChart$PieArea = F2(
 	function (a, b) {
-		return {pieWidth: a, pieHeight: b};
+		return {outerRadius: a, innerRadius: b};
 	});
 var _user$project$PieChart$PieSlice = F4(
 	function (a, b, c, d) {
@@ -30048,7 +30046,7 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 											ctor: '::',
 											_0: A2(
 												_user$project$PieChart$zooPieChart,
-												{pieWidth: 400, pieHeight: 400},
+												{outerRadius: 200, innerRadius: 100},
 												_user$project$Elementary$populationPieSlices(zoo)),
 											_1: {ctor: '[]'}
 										}),

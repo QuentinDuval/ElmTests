@@ -121,7 +121,7 @@ viewZoo zoo =
             , br [] []
             , svg
                 [ width "400", height "400", viewBox "0 0 400 400" ]
-                [ zooPieChart { pieWidth = 400, pieHeight = 400 } (populationPieSlices zoo) ]
+                [ zooPieChart { outerRadius = 200, innerRadius = 100 } (populationPieSlices zoo) ]
             , svg
                 [ width "600", height "400", viewBox "0 0 600 400" ]
                 [ stackBars { width = 600, height = 400 } zoo.pastRecords reportProjection ]
