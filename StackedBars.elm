@@ -86,7 +86,9 @@ column xScale colorsByLabel ( key, taggedValues ) =
 
 
 type alias GraphArea =
-    { width : Float, height : Float }
+    { width : Float
+    , height : Float
+    }
 
 
 stackBars : GraphArea -> List a -> Series a k -> Svg msg
