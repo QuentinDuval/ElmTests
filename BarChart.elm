@@ -12,6 +12,7 @@ import Visualization.Axis as Axis exposing (defaultOptions)
 import Visualization.Shape as Shape exposing (StackConfig, StackResult)
 import Visualization.Scale as Scale exposing (BandConfig, BandScale, ContinuousScale, defaultBandConfig)
 import List.Extra as List
+import ZipList exposing (..)
 import SvgUtils exposing (..)
 
 
@@ -38,10 +39,18 @@ type alias Config =
     }
 
 
+type alias Label =
+    String
+
+
+type alias Color =
+    String
+
+
 type alias Projection a =
-    { label : String
+    { label : Label
     , accessor : a -> Int
-    , fillColor : String
+    , fillColor : Color
     }
 
 
@@ -67,11 +76,6 @@ barChart config inputData series =
 --------------------------------------------------------------------------------
 
 
-largestAtBottom : List ( k, List number ) -> List ( k, List number )
-largestAtBottom =
-    List.sortBy (Tuple.second >> List.sum >> negate)
-
-
 stackData : List a -> Series a k -> StackConfig String
 stackData inputData series =
     { data = samples inputData series
@@ -87,27 +91,43 @@ samples inputData { projections } =
         projections
 
 
-type alias ColumnBlock =
-    { label : String
+largestAtBottom : List ( k, List number ) -> List ( k, List number )
+largestAtBottom =
+    List.sortBy (Tuple.second >> List.sum >> negate)
+
+
+
+--------------------------------------------------------------------------------
+
+
+type alias StackElement =
+    { label : Label
     , upperY : Float
     , lowerY : Float
     }
 
 
-column : BandScale key -> Dict String String -> ( key, List ColumnBlock ) -> Svg msg
-column xScale colorsByLabel ( key, taggedValues ) =
+stackedColumn : BandScale key -> Dict Label Color -> key -> List StackElement -> Svg msg
+stackedColumn xScale colorsByLabel key stackElements =
     let
+        labelColor label =
+            Dict.get label colorsByLabel |> Maybe.withDefault "#FFFFFF"
+
         makeBlock { label, upperY, lowerY } =
             rect
                 [ x := Scale.convert xScale key
                 , y := lowerY
                 , width := Scale.bandwidth xScale
                 , height := abs (upperY - lowerY)
-                , fill (Dict.get label colorsByLabel |> Maybe.withDefault "#FFFFFF")
+                , fill (labelColor label)
                 ]
                 []
     in
-        g [] (List.map makeBlock taggedValues)
+        g [] (List.map makeBlock stackElements)
+
+
+
+--------------------------------------------------------------------------------
 
 
 stackedBars : Config -> List a -> Series a k -> Svg msg
@@ -119,16 +139,12 @@ stackedBars canvas inputData series =
         keys =
             List.map series.key inputData
 
-        colors =
-            Dict.fromList <|
-                List.map (\input -> ( input.label, input.fillColor )) series.projections
+        colorsByLabel =
+            List.map (\input -> ( input.label, input.fillColor )) series.projections
+                |> Dict.fromList
 
         padding =
-            { top = 30
-            , left = 60
-            , right = 30
-            , bottom = 60
-            }
+            { top = 30, left = 60, right = 30, bottom = 60 }
 
         xScale : BandScale k
         xScale =
@@ -151,50 +167,42 @@ stackedBars canvas inputData series =
         xAxis : Svg msg
         xAxis =
             Scale.toRenderable xScale
-                |> Axis.axis
-                    { axisOptions
-                        | orientation = Axis.Bottom
-                        , tickCount = 10
-                    }
+                |> Axis.axis { axisOptions | orientation = Axis.Bottom, tickCount = 10 }
 
         yAxis : Svg msg
         yAxis =
             yScale
                 |> Axis.axis { axisOptions | orientation = Axis.Left }
 
-        valuesByKey : List (List ( Float, Float ))
-        valuesByKey =
-            List.transpose values
+        stackElements : List (List StackElement)
+        stackElements =
+            let
+                valuesByKey =
+                    List.transpose values
 
-        columnValues : List (List ColumnBlock)
-        columnValues =
-            List.map
-                (\columnBlocks ->
-                    List.map2
-                        (\label ( y1, y2 ) ->
-                            { upperY = Scale.convert yScale y1
-                            , lowerY = Scale.convert yScale y2
-                            , label = label
-                            }
-                        )
-                        labels
-                        columnBlocks
-                )
-                valuesByKey
+                stackElement label ( y1, y2 ) =
+                    { upperY = Scale.convert yScale y1
+                    , lowerY = Scale.convert yScale y2
+                    , label = label
+                    }
+            in
+                List.map
+                    (\columnBlocks -> stackElement <$> labels <*> columnBlocks)
+                    valuesByKey
     in
         svg []
             [ g [ translate ( padding.left - 1, canvas.height - padding.bottom ) ] [ xAxis ]
             , g [ translate ( padding.left - 1, padding.top ) ] [ yAxis ]
             , g [ translate ( padding.left, padding.top ) ] <|
-                List.map
-                    (column xScale colors)
-                    (List.map2 (,) keys columnValues)
+                stackedColumn xScale colorsByLabel
+                    <$> keys
+                    <*> stackElements
             ]
 
 
 
 --------------------------------------------------------------------------------
--- Side by side bars
+-- PRIVATE: Construction of a side by side bar chart
 --------------------------------------------------------------------------------
 
 
