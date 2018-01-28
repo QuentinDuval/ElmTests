@@ -4,7 +4,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
 
-(:=) : (String -> Svg.Attribute msg) -> a -> Svg.Attribute msg
+(:=) : (String -> b) -> a -> b
 (:=) field val =
     field <| toString val
 

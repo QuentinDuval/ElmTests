@@ -84,7 +84,7 @@ stackData inputData series =
     }
 
 
-samples : List a -> Series a k -> List ( String, List Float )
+samples : List a -> Series a k -> List ( Label, List Float )
 samples inputData { projections } =
     List.map
         (\{ label, accessor } -> ( label, List.map (accessor >> toFloat) inputData ))
@@ -206,9 +206,80 @@ stackedBars canvas inputData series =
 --------------------------------------------------------------------------------
 
 
+sideBySideColumn : BandScale key -> ( key, Float ) -> Svg msg
+sideBySideColumn xScale ( key, value ) =
+    g []
+        [ rect
+            [ x := Scale.convert xScale key
+            , y := value
+            , width := Scale.bandwidth xScale
+            , height := value
+            ]
+            []
+        , text_
+            [ x := Scale.convert (Scale.toRenderable xScale) key
+            , y := (value - 5)
+            , textAnchor "middle"
+            ]
+            [ text := value ]
+        ]
+
+
 sideBySideBars : Config -> List a -> Series a k -> Svg msg
 sideBySideBars canvas inputData series =
-    svg [] []
+    let
+        padding =
+            { top = 30, left = 60, right = 30, bottom = 60 }
+
+        keys =
+            List.map series.key inputData
+
+        valuesByLabel : List ( Label, List Float )
+        valuesByLabel =
+            samples inputData series
+
+        allValues =
+            List.concatMap Tuple.second valuesByLabel
+
+        extent =
+            ( 0, List.maximum allValues |> Maybe.withDefault 0 )
+
+        xScale : BandScale k
+        xScale =
+            Scale.band
+                { defaultBandConfig | paddingInner = 0.1, paddingOuter = 0.2 }
+                keys
+                ( 0, canvas.width - (padding.top + padding.bottom) )
+
+        yScale : ContinuousScale
+        yScale =
+            Scale.linear extent ( canvas.height - (padding.left + padding.right), 0 )
+                |> flip Scale.nice 4
+
+        xAxis : Svg msg
+        xAxis =
+            Scale.toRenderable xScale
+                |> Axis.axis { defaultOptions | orientation = Axis.Bottom }
+
+        yAxis : Svg msg
+        yAxis =
+            yScale
+                |> Axis.axis { defaultOptions | orientation = Axis.Left, tickCount = 5 }
+
+        fakeValuesTO_REPLACE =
+            valuesByLabel
+                |> List.head
+                |> Maybe.map (Tuple.second >> (\vals -> (,) <$> keys <*> vals))
+                |> Maybe.withDefault []
+    in
+        svg []
+            [ g [ translate ( padding.left - 1, canvas.height - padding.bottom ) ] [ xAxis ]
+            , g [ translate ( padding.left - 1, padding.top ) ] [ yAxis ]
+            , g [ translate ( padding.left, padding.top ) ] <|
+                List.map
+                    (sideBySideColumn xScale)
+                    fakeValuesTO_REPLACE
+            ]
 
 
 

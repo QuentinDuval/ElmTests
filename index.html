@@ -29378,6 +29378,10 @@ var _gampleman$elm_visualization$Visualization_Shape$areaRadial = function (curv
 						_p5)));
 		});
 };
+var _user$project$ZipList_ops = _user$project$ZipList_ops || {};
+_user$project$ZipList_ops['<*>'] = _elm_lang$core$Basics$flip(_elm_community$list_extra$List_Extra$andMap);
+var _user$project$ZipList_ops = _user$project$ZipList_ops || {};
+_user$project$ZipList_ops['<$>'] = _elm_lang$core$List$map;
 var _user$project$SvgUtils$translate = function (_p0) {
 	var _p1 = _p0;
 	return _elm_lang$svg$Svg_Attributes$transform(
@@ -29393,12 +29397,85 @@ _user$project$SvgUtils_ops[':='] = F2(
 		return field(
 			_elm_lang$core$Basics$toString(val));
 	});
-var _user$project$BarChart$column = F3(
-	function (xScale, colorsByLabel, _p0) {
+var _user$project$BarChart$sideBySideColumn = F2(
+	function (xScale, _p0) {
 		var _p1 = _p0;
-		var makeBlock = function (_p2) {
-			var _p3 = _p2;
-			var _p4 = _p3.lowerY;
+		var _p3 = _p1._1;
+		var _p2 = _p1._0;
+		return A2(
+			_elm_lang$svg$Svg$g,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$rect,
+					{
+						ctor: '::',
+						_0: A2(
+							_user$project$SvgUtils_ops[':='],
+							_elm_lang$svg$Svg_Attributes$x,
+							A2(_gampleman$elm_visualization$Visualization_Scale$convert, xScale, _p2)),
+						_1: {
+							ctor: '::',
+							_0: A2(_user$project$SvgUtils_ops[':='], _elm_lang$svg$Svg_Attributes$y, _p3),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_user$project$SvgUtils_ops[':='],
+									_elm_lang$svg$Svg_Attributes$width,
+									_gampleman$elm_visualization$Visualization_Scale$bandwidth(xScale)),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$SvgUtils_ops[':='], _elm_lang$svg$Svg_Attributes$height, _p3),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$svg$Svg$text_,
+						{
+							ctor: '::',
+							_0: A2(
+								_user$project$SvgUtils_ops[':='],
+								_elm_lang$svg$Svg_Attributes$x,
+								A2(
+									_gampleman$elm_visualization$Visualization_Scale$convert,
+									_gampleman$elm_visualization$Visualization_Scale$toRenderable(xScale),
+									_p2)),
+							_1: {
+								ctor: '::',
+								_0: A2(_user$project$SvgUtils_ops[':='], _elm_lang$svg$Svg_Attributes$y, _p3 - 5),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$textAnchor('middle'),
+									_1: {ctor: '[]'}
+								}
+							}
+						},
+						{
+							ctor: '::',
+							_0: A2(_user$project$SvgUtils_ops[':='], _elm_lang$svg$Svg$text, _p3),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$BarChart$stackedColumn = F4(
+	function (xScale, colorsByLabel, key, stackElements) {
+		var labelColor = function (label) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				'#FFFFFF',
+				A2(_elm_lang$core$Dict$get, label, colorsByLabel));
+		};
+		var makeBlock = function (_p4) {
+			var _p5 = _p4;
+			var _p6 = _p5.lowerY;
 			return A2(
 				_elm_lang$svg$Svg$rect,
 				{
@@ -29406,10 +29483,10 @@ var _user$project$BarChart$column = F3(
 					_0: A2(
 						_user$project$SvgUtils_ops[':='],
 						_elm_lang$svg$Svg_Attributes$x,
-						A2(_gampleman$elm_visualization$Visualization_Scale$convert, xScale, _p1._0)),
+						A2(_gampleman$elm_visualization$Visualization_Scale$convert, xScale, key)),
 					_1: {
 						ctor: '::',
-						_0: A2(_user$project$SvgUtils_ops[':='], _elm_lang$svg$Svg_Attributes$y, _p4),
+						_0: A2(_user$project$SvgUtils_ops[':='], _elm_lang$svg$Svg_Attributes$y, _p6),
 						_1: {
 							ctor: '::',
 							_0: A2(
@@ -29421,14 +29498,11 @@ var _user$project$BarChart$column = F3(
 								_0: A2(
 									_user$project$SvgUtils_ops[':='],
 									_elm_lang$svg$Svg_Attributes$height,
-									_elm_lang$core$Basics$abs(_p3.upperY - _p4)),
+									_elm_lang$core$Basics$abs(_p5.upperY - _p6)),
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$svg$Svg_Attributes$fill(
-										A2(
-											_elm_lang$core$Maybe$withDefault,
-											'#FFFFFF',
-											A2(_elm_lang$core$Dict$get, _p3.label, colorsByLabel))),
+										labelColor(_p5.label)),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -29440,55 +29514,70 @@ var _user$project$BarChart$column = F3(
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{ctor: '[]'},
-			A2(_elm_lang$core$List$map, makeBlock, _p1._1));
+			A2(_elm_lang$core$List$map, makeBlock, stackElements));
+	});
+var _user$project$BarChart$largestAtBottom = _elm_lang$core$List$sortBy(
+	function (_p7) {
+		return _elm_lang$core$Basics$negate(
+			_elm_lang$core$List$sum(
+				_elm_lang$core$Tuple$second(_p7)));
 	});
 var _user$project$BarChart$samples = F2(
-	function (inputData, _p5) {
-		var _p6 = _p5;
+	function (inputData, _p8) {
+		var _p9 = _p8;
 		return A2(
 			_elm_lang$core$List$map,
-			function (_p7) {
-				var _p8 = _p7;
+			function (_p10) {
+				var _p11 = _p10;
 				return {
 					ctor: '_Tuple2',
-					_0: _p8.label,
+					_0: _p11.label,
 					_1: A2(
 						_elm_lang$core$List$map,
-						function (_p9) {
+						function (_p12) {
 							return _elm_lang$core$Basics$toFloat(
-								_p8.accessor(_p9));
+								_p11.accessor(_p12));
 						},
 						inputData)
 				};
 			},
-			_p6.projections);
+			_p9.projections);
 	});
-var _user$project$BarChart$largestAtBottom = _elm_lang$core$List$sortBy(
-	function (_p10) {
-		return _elm_lang$core$Basics$negate(
-			_elm_lang$core$List$sum(
-				_elm_lang$core$Tuple$second(_p10)));
-	});
-var _user$project$BarChart$stackData = F2(
-	function (inputData, series) {
-		return {
-			data: A2(_user$project$BarChart$samples, inputData, series),
-			offset: _gampleman$elm_visualization$Visualization_Shape$stackOffsetNone,
-			order: _user$project$BarChart$largestAtBottom
-		};
-	});
-var _user$project$BarChart$stackedBars = F3(
+var _user$project$BarChart$sideBySideBars = F3(
 	function (canvas, inputData, series) {
-		var axisOptions = _gampleman$elm_visualization$Visualization_Axis$defaultOptions;
-		var padding = {top: 30, left: 60, right: 30, bottom: 60};
-		var colors = _elm_lang$core$Dict$fromList(
-			A2(
-				_elm_lang$core$List$map,
-				function (input) {
-					return {ctor: '_Tuple2', _0: input.label, _1: input.fillColor};
-				},
-				series.projections));
+		var valuesByLabel = A2(_user$project$BarChart$samples, inputData, series);
+		var allValues = A2(_elm_lang$core$List$concatMap, _elm_lang$core$Tuple$second, valuesByLabel);
+		var extent = {
+			ctor: '_Tuple2',
+			_0: 0,
+			_1: A2(
+				_elm_lang$core$Maybe$withDefault,
+				0,
+				_elm_lang$core$List$maximum(allValues))
+		};
 		var keys = A2(_elm_lang$core$List$map, series.key, inputData);
+		var fakeValuesTO_REPLACE = A2(
+			_elm_lang$core$Maybe$withDefault,
+			{ctor: '[]'},
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (_p13) {
+					return function (vals) {
+						return A2(
+							_user$project$ZipList_ops['<*>'],
+							A2(
+								_user$project$ZipList_ops['<$>'],
+								F2(
+									function (v0, v1) {
+										return {ctor: '_Tuple2', _0: v0, _1: v1};
+									}),
+								keys),
+							vals);
+					}(
+						_elm_lang$core$Tuple$second(_p13));
+				},
+				_elm_lang$core$List$head(valuesByLabel)));
+		var padding = {top: 30, left: 60, right: 30, bottom: 60};
 		var xScale = A3(
 			_gampleman$elm_visualization$Visualization_Scale$band,
 			_elm_lang$core$Native_Utils.update(
@@ -29499,14 +29588,9 @@ var _user$project$BarChart$stackedBars = F3(
 		var xAxis = A2(
 			_gampleman$elm_visualization$Visualization_Axis$axis,
 			_elm_lang$core$Native_Utils.update(
-				axisOptions,
-				{orientation: _gampleman$elm_visualization$Visualization_Axis$Bottom, tickCount: 10}),
+				_gampleman$elm_visualization$Visualization_Axis$defaultOptions,
+				{orientation: _gampleman$elm_visualization$Visualization_Axis$Bottom}),
 			_gampleman$elm_visualization$Visualization_Scale$toRenderable(xScale));
-		var _p11 = _gampleman$elm_visualization$Visualization_Shape$stack(
-			A2(_user$project$BarChart$stackData, inputData, series));
-		var values = _p11.values;
-		var labels = _p11.labels;
-		var extent = _p11.extent;
 		var yScale = A3(
 			_elm_lang$core$Basics$flip,
 			_gampleman$elm_visualization$Visualization_Scale$nice,
@@ -29518,28 +29602,9 @@ var _user$project$BarChart$stackedBars = F3(
 		var yAxis = A2(
 			_gampleman$elm_visualization$Visualization_Axis$axis,
 			_elm_lang$core$Native_Utils.update(
-				axisOptions,
-				{orientation: _gampleman$elm_visualization$Visualization_Axis$Left}),
+				_gampleman$elm_visualization$Visualization_Axis$defaultOptions,
+				{orientation: _gampleman$elm_visualization$Visualization_Axis$Left, tickCount: 5}),
 			yScale);
-		var valuesByKey = _elm_community$list_extra$List_Extra$transpose(values);
-		var columnValues = A2(
-			_elm_lang$core$List$map,
-			function (columnBlocks) {
-				return A3(
-					_elm_lang$core$List$map2,
-					F2(
-						function (label, _p12) {
-							var _p13 = _p12;
-							return {
-								upperY: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p13._0),
-								lowerY: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p13._1),
-								label: label
-							};
-						}),
-					labels,
-					columnBlocks);
-			},
-			valuesByKey);
 		return A2(
 			_elm_lang$svg$Svg$svg,
 			{ctor: '[]'},
@@ -29585,25 +29650,151 @@ var _user$project$BarChart$stackedBars = F3(
 							},
 							A2(
 								_elm_lang$core$List$map,
-								A2(_user$project$BarChart$column, xScale, colors),
-								A3(
-									_elm_lang$core$List$map2,
-									F2(
-										function (v0, v1) {
-											return {ctor: '_Tuple2', _0: v0, _1: v1};
-										}),
-									keys,
-									columnValues))),
+								_user$project$BarChart$sideBySideColumn(xScale),
+								fakeValuesTO_REPLACE)),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});
+var _user$project$BarChart$stackData = F2(
+	function (inputData, series) {
+		return {
+			data: A2(_user$project$BarChart$samples, inputData, series),
+			offset: _gampleman$elm_visualization$Visualization_Shape$stackOffsetNone,
+			order: _user$project$BarChart$largestAtBottom
+		};
+	});
+var _user$project$BarChart$stackedBars = F3(
+	function (canvas, inputData, series) {
+		var axisOptions = _gampleman$elm_visualization$Visualization_Axis$defaultOptions;
+		var padding = {top: 30, left: 60, right: 30, bottom: 60};
+		var colorsByLabel = _elm_lang$core$Dict$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				function (input) {
+					return {ctor: '_Tuple2', _0: input.label, _1: input.fillColor};
+				},
+				series.projections));
+		var keys = A2(_elm_lang$core$List$map, series.key, inputData);
+		var xScale = A3(
+			_gampleman$elm_visualization$Visualization_Scale$band,
+			_elm_lang$core$Native_Utils.update(
+				_gampleman$elm_visualization$Visualization_Scale$defaultBandConfig,
+				{paddingInner: 0.1, paddingOuter: 0.2}),
+			keys,
+			{ctor: '_Tuple2', _0: 0, _1: canvas.width - (padding.top + padding.bottom)});
+		var xAxis = A2(
+			_gampleman$elm_visualization$Visualization_Axis$axis,
+			_elm_lang$core$Native_Utils.update(
+				axisOptions,
+				{orientation: _gampleman$elm_visualization$Visualization_Axis$Bottom, tickCount: 10}),
+			_gampleman$elm_visualization$Visualization_Scale$toRenderable(xScale));
+		var _p14 = _gampleman$elm_visualization$Visualization_Shape$stack(
+			A2(_user$project$BarChart$stackData, inputData, series));
+		var values = _p14.values;
+		var labels = _p14.labels;
+		var extent = _p14.extent;
+		var yScale = A3(
+			_elm_lang$core$Basics$flip,
+			_gampleman$elm_visualization$Visualization_Scale$nice,
+			4,
+			A2(
+				_gampleman$elm_visualization$Visualization_Scale$linear,
+				extent,
+				{ctor: '_Tuple2', _0: canvas.height - (padding.left + padding.right), _1: 0}));
+		var yAxis = A2(
+			_gampleman$elm_visualization$Visualization_Axis$axis,
+			_elm_lang$core$Native_Utils.update(
+				axisOptions,
+				{orientation: _gampleman$elm_visualization$Visualization_Axis$Left}),
+			yScale);
+		var stackElements = function () {
+			var stackElement = F2(
+				function (label, _p15) {
+					var _p16 = _p15;
+					return {
+						upperY: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p16._0),
+						lowerY: A2(_gampleman$elm_visualization$Visualization_Scale$convert, yScale, _p16._1),
+						label: label
+					};
+				});
+			var valuesByKey = _elm_community$list_extra$List_Extra$transpose(values);
+			return A2(
+				_elm_lang$core$List$map,
+				function (columnBlocks) {
+					return A2(
+						_user$project$ZipList_ops['<*>'],
+						A2(_user$project$ZipList_ops['<$>'], stackElement, labels),
+						columnBlocks);
+				},
+				valuesByKey);
+		}();
+		return A2(
+			_elm_lang$svg$Svg$svg,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$g,
+					{
+						ctor: '::',
+						_0: _user$project$SvgUtils$translate(
+							{ctor: '_Tuple2', _0: padding.left - 1, _1: canvas.height - padding.bottom}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: xAxis,
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$svg$Svg$g,
+						{
+							ctor: '::',
+							_0: _user$project$SvgUtils$translate(
+								{ctor: '_Tuple2', _0: padding.left - 1, _1: padding.top}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: yAxis,
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$svg$Svg$g,
+							{
+								ctor: '::',
+								_0: _user$project$SvgUtils$translate(
+									{ctor: '_Tuple2', _0: padding.left, _1: padding.top}),
+								_1: {ctor: '[]'}
+							},
+							A2(
+								_user$project$ZipList_ops['<*>'],
+								A2(
+									_user$project$ZipList_ops['<$>'],
+									A2(_user$project$BarChart$stackedColumn, xScale, colorsByLabel),
+									keys),
+								stackElements)),
 						_1: {ctor: '[]'}
 					}
 				}
 			});
 	});
 var _user$project$BarChart$barChart = F3(
-	function (canvas, inputData, series) {
-		return A3(_user$project$BarChart$stackedBars, canvas, inputData, series);
+	function (config, inputData, series) {
+		var _p17 = config.positioning;
+		if (_p17.ctor === 'Stacked') {
+			return A3(_user$project$BarChart$stackedBars, config, inputData, series);
+		} else {
+			return A3(_user$project$BarChart$sideBySideBars, config, inputData, series);
+		}
 	});
-var _user$project$BarChart$GraphArea = F3(
+var _user$project$BarChart$Config = F3(
 	function (a, b, c) {
 		return {width: a, height: b, positioning: c};
 	});
@@ -29615,7 +29806,7 @@ var _user$project$BarChart$Series = F2(
 	function (a, b) {
 		return {key: a, projections: b};
 	});
-var _user$project$BarChart$ColumnBlock = F3(
+var _user$project$BarChart$StackElement = F3(
 	function (a, b, c) {
 		return {label: a, upperY: b, lowerY: c};
 	});
@@ -30089,7 +30280,7 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 												ctor: '::',
 												_0: A3(
 													_user$project$BarChart$barChart,
-													{width: 600, height: 400, positioning: _user$project$BarChart$Stacked},
+													{width: 600, height: 400, positioning: _user$project$BarChart$SideBySide},
 													zoo.pastRecords,
 													_user$project$Elementary$reportProjection),
 												_1: {ctor: '[]'}
