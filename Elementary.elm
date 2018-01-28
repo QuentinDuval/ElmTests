@@ -123,9 +123,11 @@ viewZoo zoo =
                 [ width "400", height "400", viewBox "0 0 400 400" ]
                 [ zooPieChart { outerRadius = 200, innerRadius = 100 } (populationPieSlices zoo) ]
             , svg
-                [ width "600", height "400", viewBox "0 0 600 400" ]
-                -- [ barChart { width = 600, height = 400, positioning = Stacked } zoo.pastRecords reportProjection ]
-                [ barChart { width = 600, height = 400, positioning = SideBySide } zoo.pastRecords reportProjection ]
+                [ width "500", height "400", viewBox "0 0 500 400" ]
+                [ barChart { width = 500, height = 400, positioning = SideBySide } zoo.pastRecords reportProjection ]
+            , svg
+                [ width "500", height "400", viewBox "0 0 500 400" ]
+                [ barChart { width = 500, height = 400, positioning = Stacked } zoo.pastRecords reportProjection ]
             ]
 
 
