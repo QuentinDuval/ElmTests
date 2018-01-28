@@ -1,12 +1,12 @@
 module Elementary exposing (..)
 
+import BarChart exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 import Dict exposing (Dict)
 import Svg exposing (svg)
 import Svg.Attributes as Svg exposing (width, height, viewBox)
 import PieChart exposing (..)
-import StackedBars exposing (..)
 
 
 main : Program Never Zoo ZooMsg

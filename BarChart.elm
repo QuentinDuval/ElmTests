@@ -1,4 +1,4 @@
-module StackedBars exposing (stackBars, Series)
+module BarChart exposing (stackBars, Series)
 
 import Dict exposing (Dict)
 import Svg exposing (..)
