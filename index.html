@@ -29461,7 +29461,7 @@ var _user$project$BarChart$samples = F2(
 						inputData)
 				};
 			},
-			_p6.values);
+			_p6.projections);
 	});
 var _user$project$BarChart$largestAtBottom = _elm_lang$core$List$sortBy(
 	function (_p10) {
@@ -29477,7 +29477,7 @@ var _user$project$BarChart$stackData = F2(
 			order: _user$project$BarChart$largestAtBottom
 		};
 	});
-var _user$project$BarChart$stackBars = F3(
+var _user$project$BarChart$stackedBars = F3(
 	function (canvas, inputData, series) {
 		var axisOptions = _gampleman$elm_visualization$Visualization_Axis$defaultOptions;
 		var padding = {top: 30, left: 60, right: 30, bottom: 60};
@@ -29487,7 +29487,7 @@ var _user$project$BarChart$stackBars = F3(
 				function (input) {
 					return {ctor: '_Tuple2', _0: input.label, _1: input.fillColor};
 				},
-				series.values));
+				series.projections));
 		var keys = A2(_elm_lang$core$List$map, series.key, inputData);
 		var xScale = A3(
 			_gampleman$elm_visualization$Visualization_Scale$band,
@@ -29599,18 +29599,28 @@ var _user$project$BarChart$stackBars = F3(
 				}
 			});
 	});
+var _user$project$BarChart$barChart = F3(
+	function (canvas, inputData, series) {
+		return A3(_user$project$BarChart$stackedBars, canvas, inputData, series);
+	});
+var _user$project$BarChart$GraphArea = F3(
+	function (a, b, c) {
+		return {width: a, height: b, positioning: c};
+	});
+var _user$project$BarChart$Projection = F3(
+	function (a, b, c) {
+		return {label: a, accessor: b, fillColor: c};
+	});
 var _user$project$BarChart$Series = F2(
 	function (a, b) {
-		return {key: a, values: b};
+		return {key: a, projections: b};
 	});
 var _user$project$BarChart$ColumnBlock = F3(
 	function (a, b, c) {
 		return {label: a, upperY: b, lowerY: c};
 	});
-var _user$project$BarChart$GraphArea = F2(
-	function (a, b) {
-		return {width: a, height: b};
-	});
+var _user$project$BarChart$Stacked = {ctor: 'Stacked'};
+var _user$project$BarChart$SideBySide = {ctor: 'SideBySide'};
 var _user$project$PieChart$zooPieChart = F2(
 	function (_p0, rawData) {
 		var _p1 = _p0;
@@ -29831,7 +29841,7 @@ var _user$project$Elementary$populationPieSlices = function (_p1) {
 };
 var _user$project$Elementary$reportProjection = {
 	key: _elm_lang$core$Tuple$first,
-	values: A3(
+	projections: A3(
 		_elm_lang$core$List$map2,
 		F2(
 			function (beast, color) {
@@ -30078,8 +30088,8 @@ var _user$project$Elementary$viewZoo = function (zoo) {
 											{
 												ctor: '::',
 												_0: A3(
-													_user$project$BarChart$stackBars,
-													{width: 600, height: 400},
+													_user$project$BarChart$barChart,
+													{width: 600, height: 400, positioning: _user$project$BarChart$Stacked},
 													zoo.pastRecords,
 													_user$project$Elementary$reportProjection),
 												_1: {ctor: '[]'}

@@ -86,7 +86,7 @@ getCount beast =
 reportProjection : Series PopulationByYear Int
 reportProjection =
     { key = Tuple.first
-    , values =
+    , projections =
         List.map2
             (\beast color -> { label = beast, accessor = Tuple.second >> getCount beast, fillColor = color })
             species
@@ -124,7 +124,7 @@ viewZoo zoo =
                 [ zooPieChart { outerRadius = 200, innerRadius = 100 } (populationPieSlices zoo) ]
             , svg
                 [ width "600", height "400", viewBox "0 0 600 400" ]
-                [ stackBars { width = 600, height = 400 } zoo.pastRecords reportProjection ]
+                [ barChart { width = 600, height = 400, positioning = Stacked } zoo.pastRecords reportProjection ]
             ]
 
 
